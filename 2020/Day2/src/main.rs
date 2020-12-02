@@ -77,5 +77,5 @@ fn main() {
     }
 
     println!("Day 2 / Part 1: {}", count_valid_passwords_part1(&lines));
-    println!("Day 2 / Part 1: {}", count_valid_passwords_part2(&lines));
+    println!("Day 2 / Part 2: {}", count_valid_passwords_part2(&lines));
 }
