@@ -90,19 +90,16 @@ fn count_valid_passports(content: Vec<&str>) -> usize {
     total + if fields >= 0xFE { 1 } else { 0 }
 }
 
-fn main() {
+fn main() -> std::io::Result<()> {
     let mut buffer = String::new();
-    let lines: Vec<&str>;
+    let mut file = File::open("data/input.txt")?;
 
-    match File::open("data/input.txt") {
-        Err(_) => panic!("Error reading <input.txt>"),
-        Ok(mut file) => {
-            file.read_to_string(&mut buffer).unwrap();
-            lines = buffer.trim().split("\n").collect();
-        }
-    }
+    file.read_to_string(&mut buffer).unwrap();
+    let lines: Vec<&str> = buffer.trim().split("\n").collect();
 
     println!("Day 4 / Part 2: {}", count_valid_passports(lines));
+
+    Ok(())
 }
 
 #[cfg(test)]

@@ -64,18 +64,15 @@ fn count_valid_passwords_part2(passwords: &Vec<&str>) -> usize {
         .count()
 }
 
-fn main() {
+fn main() -> std::io::Result<()> {
     let mut buffer = String::new();
-    let lines: Vec<&str>;
+    let mut file = File::open("data/input.txt")?;
 
-    match File::open("data/input.txt") {
-        Err(_) => panic!("Error reading <input.txt>"),
-        Ok(mut file) => {
-            file.read_to_string(&mut buffer).unwrap();
-            lines = buffer.trim().split("\n").collect();
-        }
-    }
+    file.read_to_string(&mut buffer).unwrap();
+    let lines: Vec<&str> = buffer.trim().split("\n").collect();
 
     println!("Day 2 / Part 1: {}", count_valid_passwords_part1(&lines));
     println!("Day 2 / Part 2: {}", count_valid_passwords_part2(&lines));
+
+    Ok(())
 }
