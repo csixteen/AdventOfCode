@@ -56,25 +56,23 @@ fn three_sum_part2(nums: Vec<i32>) -> (i32, i32, i32) {
 //--------------------------------------------------
 // Main
 
-fn main() {
+fn main() -> std::io::Result<()> {
     let mut buffer = String::new();
-    let numbers: Vec<i32>;
+    let mut file = File::open("data/input.txt")?;
 
-    match File::open("data/input.txt") {
-        Err(_) => panic!("Error reading <input.txt>"),
-        Ok(mut file) => {
-            file.read_to_string(&mut buffer).unwrap();
-            numbers = buffer
-                .trim()
-                .split("\n")
-                .map(|n| { i32::from_str(n).unwrap() })
-                .collect();
-        }
-    }
+    file.read_to_string(&mut buffer).unwrap();
+    let numbers: Vec<i32> = buffer
+        .trim()
+        .split("\n")
+        .map(|n| { i32::from_str(n).unwrap() })
+        .collect();
+
 
     let (a, b) = two_sum_part1(&numbers);
     let (c, d, e) = three_sum_part2(numbers.clone());
 
     println!("Day 1 / Part 1: {}", a*b);
     println!("Day 1 / Part 2: {}", c*d*e);
+
+    Ok(())
 }
