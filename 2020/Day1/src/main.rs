@@ -1,5 +1,7 @@
 // https://adventofcode.com/2020/day/1
 
+#![allow(non_snake_case)]
+
 use std::cmp::Ordering;
 use std::collections::HashSet;
 use std::fs::File;
@@ -48,14 +50,7 @@ fn three_sum_part2(nums: Vec<i32>) -> (i32, i32, i32) {
 
     &nums.sort_unstable();
 
-    for i in 0..nums.len() {
-        match two_sum_part2(&nums, i) {
-            None => { continue; },
-            Some(x) => { return x; },
-        }
-    }
-
-    unreachable!();
+    (0..nums.len()).find_map(|i| two_sum_part2(&nums, i)).unwrap()
 }
 
 //--------------------------------------------------
