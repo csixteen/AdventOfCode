@@ -63,7 +63,7 @@ def three_sum(numbers):
     for i,_ in enumerate(numbers):
         try:
             return two_sum(numbers, i)
-        exception:
+        except:
             pass
 ```
 
