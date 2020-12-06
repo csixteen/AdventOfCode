@@ -28,7 +28,7 @@ fn is_valid_password(password: &str, checker: &CheckerFn) -> bool {
             let letter = char::from_str(c.get(3).unwrap().as_str()).unwrap();
             let passwd = c.get(4).unwrap().as_str();
 
-            return checker(_min, _max, letter, passwd.to_string());
+            checker(_min, _max, letter, passwd.to_string())
         }
     }
 }
