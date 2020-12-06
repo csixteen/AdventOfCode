@@ -8,10 +8,10 @@ These were variations of the classic `Two Sum` and `Three Sum` problems. Unlike 
 We are guaranteed that there is only one combination of two numbers whose sum is our **TARGET_SUM** (2020). The easiest way to find out such combination of numbers is with two nested loops:
 
 ```python
-for i in range(len(numbers)):
-    for j in range(len(numbers)):
-        if i != j and i + j == TARGET_SUM:
-            return numbers[i], numbers[j]
+for i in numbers:
+    for j in numbers:
+        if i + j == TARGET_SUM:
+            return i, j
 ```
 
 For relatively small inputs (such as the one provided), you can get your answer in no time. This also has the advantage of having O(1) space complexity. When the input grows, however, this solution becomes quite slow. A way of solving this in linear time (at the expense of O(N) space complexity) is by storing the numbers in a data structure that guarantees O(1) time complexity for insertion and lookup, as we go. A set is a good option, since we are only interested in testing membership.
@@ -33,11 +33,11 @@ Since we are only traversing the collection of numbers once, we achieve a nice l
 This one is also straightforward to solve using a brute-force solution. Instead of two nested loops, you just use three nested loops:
 
 ```python
-for i in range(len(numbers)):
-    for j in range(len(numbers)):
-        for k in range(len(numbers)):
-            if i != j and i != k and j != k and numbers[i]+numbers[j]+numbers[k] == TARGET_SUM:
-                return numbers[i], numbers[j], numbers[k]
+for i in numbers:
+    for j in numbers:
+        for k in numbers:
+            if i + j + k == TARGET_SUM:
+                return i, j, k
 ```
 
 Again, for relatively small inputs, you can get your answer in no time. But the time complexity is even worse than before, because of the additional nested for loop; its time complexity is O(N^3). Certainly we can do better than that. Fortunately the constraints of the problem are in our favour. For instance, we don't really care much about the order of the tuple of numbers that add up to **TARGET_SUM**: we only care about the numbers. This means that if our input is sorted, it may make things easier when scanning the collection of numbers. The built-in sort functions usually apply an algorithm with a decent time complexity: O(nlogn). Obviously, now that we have the input sorted, we still need to search for the triplet. We can do a linear scan to the array and for each element try and find two other elements that when added together result in **TARGET_SUM**:
