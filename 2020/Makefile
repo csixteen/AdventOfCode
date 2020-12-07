@@ -6,7 +6,7 @@ define test_rust
 	cd ..;
 endef
 
-DIRS := $(shell find . -maxdepth 1 -type d ! -path ".")
+DIRS := $(shell find ./Rust -mindepth 1 -maxdepth 1 -type d ! -path ".")
 RUST_JOBS := $(addprefix rjob,${DIRS})
 
 rust: ${RUST_JOBS} ; @echo "[$@] finished!"
