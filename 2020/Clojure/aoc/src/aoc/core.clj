@@ -1,6 +1,6 @@
-(ns aoc.core)
+(ns aoc.core
+  (:require [aoc.day1 :as day1]))
 
-(defn foo
-  "I don't do a whole lot."
-  [x]
-  (println x "Hello, World!"))
+(defn -main
+  []
+  (day1/solve))
