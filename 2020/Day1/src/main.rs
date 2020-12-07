@@ -45,8 +45,8 @@ fn two_sum_part2(nums: &Vec<i32>, i: usize) -> Option<(i32, i32, i32)> {
     None
 }
 
-fn three_sum_part2(nums: Vec<i32>) -> (i32, i32, i32) {
-    let mut nums = nums;
+fn three_sum_part2(numbers: &Vec<i32>) -> (i32, i32, i32) {
+    let mut nums = numbers.clone();
 
     &nums.sort_unstable();
 
@@ -69,10 +69,31 @@ fn main() -> std::io::Result<()> {
 
 
     let (a, b) = two_sum_part1(&numbers);
-    let (c, d, e) = three_sum_part2(numbers.clone());
+    let (c, d, e) = three_sum_part2(&numbers);
 
     println!("Day 1 / Part 1: {}", a*b);
     println!("Day 1 / Part 2: {}", c*d*e);
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_two_sum_part1() {
+        assert_eq!(
+            (299, 1721),
+            two_sum_part1(&vec![1721, 979, 366, 299, 675, 1456]),
+        );
+    }
+
+    #[test]
+    fn test_three_sum_part2() {
+        assert_eq!(
+            (366, 675, 979),
+            three_sum_part2(&vec![1721, 979, 366, 299, 675, 1456]),
+        );
+    }
 }
