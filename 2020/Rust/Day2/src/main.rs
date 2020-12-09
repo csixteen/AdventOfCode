@@ -26,10 +26,9 @@
 #![allow(non_snake_case)]
 
 use std::collections::HashMap;
-use std::fs::File;
-use std::io::Read;
 use std::str::FromStr;
 
+use aoc::fs::get_file_contents;
 use lazy_static::lazy_static;
 use regex::Regex;
 
@@ -55,7 +54,7 @@ fn is_valid_password(password: &str, checker: &CheckerFn) -> bool {
     }
 }
 
-fn count_valid_passwords_part1(passwords: &Vec<&str>) -> usize {
+fn count_valid_passwords_part1(passwords: &Vec<String>) -> usize {
     passwords
         .iter()
         .filter(|p| is_valid_password(p, &|_min, _max, letter, passwd: String| {
@@ -65,7 +64,7 @@ fn count_valid_passwords_part1(passwords: &Vec<&str>) -> usize {
         .count()
 }
 
-fn count_valid_passwords_part2(passwords: &Vec<&str>) -> usize {
+fn count_valid_passwords_part2(passwords: &Vec<String>) -> usize {
     passwords
         .iter()
         .filter(|p| is_valid_password(p, &|first, second, letter, passwd: String| {
@@ -87,14 +86,41 @@ fn count_valid_passwords_part2(passwords: &Vec<&str>) -> usize {
 }
 
 fn main() -> std::io::Result<()> {
-    let mut buffer = String::new();
-    let mut file = File::open("data/input.txt")?;
-
-    file.read_to_string(&mut buffer).unwrap();
-    let lines: Vec<&str> = buffer.trim().split("\n").collect();
+    let lines = get_file_contents("data/input.txt")?;
 
     println!("Day 2 / Part 1: {}", count_valid_passwords_part1(&lines));
     println!("Day 2 / Part 2: {}", count_valid_passwords_part2(&lines));
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const RULES: [&str; 3] = [
+        "1-3 a: abcde",
+        "1-3 b: cdefg",
+        "2-9 c: ccccccccc",
+    ];
+
+    #[test]
+    fn test_count_valid_passwords_part1() {
+        assert_eq!(
+            2,
+            count_valid_passwords_part1(
+                &RULES.to_vec().iter().map(|&s| String::from(s)).collect(),
+            )
+        );
+    }
+
+    #[test]
+    fn test_count_valid_passwords_part2() {
+        assert_eq!(
+            1,
+            count_valid_passwords_part2(
+                &RULES.to_vec().iter().map(|&s| String::from(s)).collect(),
+            )
+        );
+    }
 }
