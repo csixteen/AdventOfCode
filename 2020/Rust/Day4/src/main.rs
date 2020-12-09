@@ -24,10 +24,9 @@
 
 #![allow(non_snake_case)]
 
-use std::fs::File;
-use std::io::Read;
 use std::str::FromStr;
 
+use aoc::fs::get_file_contents;
 use lazy_static::lazy_static;
 use regex::Regex;
 
@@ -93,7 +92,7 @@ fn get_fields(line: &str) -> u8 {
     })
 }
 
-fn count_valid_passports(content: Vec<&str>) -> usize {
+fn count_valid_passports(content: Vec<String>) -> usize {
     let mut total = 0;
     let mut fields: u8 = 0;
 
@@ -113,11 +112,7 @@ fn count_valid_passports(content: Vec<&str>) -> usize {
 }
 
 fn main() -> std::io::Result<()> {
-    let mut buffer = String::new();
-    let mut file = File::open("data/input.txt")?;
-
-    file.read_to_string(&mut buffer).unwrap();
-    let lines: Vec<&str> = buffer.trim().split("\n").collect();
+    let lines = get_file_contents("data/input.txt")?;
 
     println!("Day 4 / Part 2: {}", count_valid_passports(lines));
 
@@ -133,7 +128,11 @@ mod tests {
         assert_eq!(
             0,
             count_valid_passports(
-                vec!["eyr:2027", "", "byr:1981"],
+                vec![
+                    String::from("eyr:2027"),
+                    String::new(),
+                    String::from("byr:1981")
+                ],
             ),
         );
     }
@@ -157,7 +156,7 @@ mod tests {
                     "",
                     "hcl:#cfa07d eyr:2025 pid:166559648",
                     "iyr:2011 ecl:brn hgt:59in"
-                ]
+                ].iter().map(|&line| String::from(line)).collect()
             ),
         );
     }
