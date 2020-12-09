@@ -24,11 +24,9 @@
 
 #![allow(non_snake_case)]
 
-use std::fs::File;
-use std::io::Read;
+use aoc::fs::get_file_contents;
 
-
-fn count_trees(lines: &Vec<&str>, dx: usize, dy: usize) -> usize {
+fn count_trees(lines: &Vec<String>, dx: usize, dy: usize) -> usize {
     let width = lines[0].len();
     let mut x = 0;
     let mut num_trees = 0_usize;
@@ -44,24 +42,61 @@ fn count_trees(lines: &Vec<&str>, dx: usize, dy: usize) -> usize {
     num_trees
 }
 
-fn count_trees_all_slopes(lines: &Vec<&str>) -> usize {
-    count_trees(lines, 1, 1) *
-    count_trees(lines, 3, 1) *
-    count_trees(lines, 5, 1) *
-    count_trees(lines, 7, 1) *
-    count_trees(lines, 1, 2)
+fn count_trees_all_slopes(lines: &Vec<String>) -> usize {
+    [(1, 1), (3, 1), (5, 1), (7, 1), (1, 2)]
+        .iter()
+        .fold(1, |acc, (x, y)| {
+            acc * count_trees(lines, *x, *y)
+        })
 }
 
 
 fn main() -> std::io::Result<()> {
-    let mut buffer = String::new();
-    let mut file = File::open("data/input.txt")?; 
-
-    file.read_to_string(&mut buffer).unwrap();
-    let lines: Vec<&str> = buffer.trim().split("\n").collect();
+    let lines = get_file_contents("data/input.txt")?;
 
     println!("Day 3 / Part 1: {}", count_trees(&lines, 3, 1));
     println!("Day 3 / Part 2: {}", count_trees_all_slopes(&lines));
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const MAP: [&str; 11] = [
+        "..##.......",
+        "#...#...#..",
+        ".#....#..#.",
+        "..#.#...#.#",
+        ".#...##..#.",
+        "..#.##.....",
+        ".#.#.#....#",
+        ".#........#",
+        "#.##...#...",
+        "#...##....#",
+        ".#..#...#.#",
+    ];
+
+    #[test]
+    fn test_count_trees() {
+        assert_eq!(
+            7,
+            count_trees(
+                &MAP.to_vec().iter().map(|&l| String::from(l)).collect(),
+                3,
+                1,
+            ),
+        );
+    }
+
+    #[test]
+    fn test_count_trees_all_slopes() {
+        assert_eq!(
+            336,
+            count_trees_all_slopes(
+                &MAP.to_vec().iter().map(|&l| String::from(l)).collect(),
+            ),
+        );
+    }
 }
