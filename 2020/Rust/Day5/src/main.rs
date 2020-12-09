@@ -24,17 +24,22 @@
 
 #![allow(non_snake_case)]
 
-use std::fs::File;
-use std::io::Read;
+use aoc::fs::get_file_contents;
 
-fn seat_row(seat: &str) -> usize {
-    let (mut lo, mut hi) = (0, 127);
+fn binary_search(
+    seat: &str,
+    lo: usize,
+    hi: usize,
+    lo_char: char,
+    hi_char: char
+) -> usize {
+    let (mut lo, mut hi) = (lo, hi);
 
     for c in seat.chars() {
         let mid = lo + (hi - lo) / 2;
-        if c == 'F' {
+        if c == hi_char {
             hi = mid;
-        } else if c == 'B' {
+        } else if c == lo_char {
             lo = mid;
         }
     }
@@ -42,33 +47,26 @@ fn seat_row(seat: &str) -> usize {
     hi
 }
 
+fn seat_row(seat: &str) -> usize {
+    binary_search(seat, 0, 127, 'B', 'F')
+}
+
 fn seat_col(seat: &str) -> usize {
-    let (mut lo, mut hi) = (0, 7);
-
-    for c in seat.chars() {
-        let mid = lo + (hi - lo) / 2;
-        if c == 'L' {
-            hi = mid;
-        } else if c == 'R' {
-            lo = mid;
-        }
-    }
-
-    hi
+    binary_search(seat, 0, 7, 'R', 'L')
 }
 
 fn seat_id(seat: &str) -> usize {
     seat_row(seat) * 8 + seat_col(seat)
 }
 
-fn get_max_id(seats: &Vec<&str>) -> usize {
+fn get_max_id(seats: &Vec<String>) -> usize {
     seats.iter().fold(0, |acc, seat| {
         let id = seat_id(seat);
         acc.max(id)
     })
 }
 
-fn find_missing_seat(seats: &Vec<&str>) -> usize {
+fn find_missing_seat(seats: &Vec<String>) -> usize {
     let min_id = seats.iter().map(|seat| seat_id(seat)).min().unwrap();
     let max_id = get_max_id(seats);
 
@@ -81,11 +79,7 @@ fn find_missing_seat(seats: &Vec<&str>) -> usize {
 }
 
 fn main() -> std::io::Result<()> {
-    let mut buffer = String::new();
-    let mut file = File::open("data/input.txt")?;
-
-    file.read_to_string(&mut buffer).unwrap();
-    let lines: Vec<&str> = buffer.trim().split("\n").collect();
+    let lines = get_file_contents("data/input.txt")?;
 
     println!("Day 5 / Part 1: {}", get_max_id(&lines));
     println!("Day 5 / Part 2: {}", find_missing_seat(&lines));
