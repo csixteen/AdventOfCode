@@ -78,14 +78,6 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_two_sum_part1() {
-        assert_eq!(
-            (299, 1721),
-            two_sum_part1(&vec![1721, 979, 366, 299, 675, 1456]),
-        );
-    }
-
-    #[test]
     fn test_three_sum_part2() {
         assert_eq!(
             (366, 675, 979),
