@@ -24,8 +24,8 @@
 
 #![allow(non_snake_case)]
 
-use std::fs::File;
-use std::io::Read;
+use aoc::fs::get_file_contents;
+
 
 fn individual_answers(answers: &str) -> u32 {
     answers.bytes().fold(0, |acc, c| {
@@ -33,19 +33,19 @@ fn individual_answers(answers: &str) -> u32 {
     })
 }
 
-fn count_group_answers(group: &Vec<&str>) -> usize {
+fn count_group_answers(group: &Vec<String>) -> usize {
     group.iter().fold(0_u32, |acc, answers| {
         acc | individual_answers(answers)
     }).count_ones() as usize
 }
 
-fn count_total_answers(groups: &Vec<Vec<&str>>) -> usize {
+fn count_total_answers(groups: &Vec<Vec<String>>) -> usize {
     groups.iter().fold(0, |acc, group| {
         acc + count_group_answers(group)
     })
 }
 
-fn count_group_all_yes(group: &Vec<&str>) -> usize {
+fn count_group_all_yes(group: &Vec<String>) -> usize {
     group
         .iter()
         .fold([0; 26], |mut acc, person| {
@@ -59,19 +59,15 @@ fn count_group_all_yes(group: &Vec<&str>) -> usize {
         .count()
 }
 
-fn count_total_all_yes(groups: &Vec<Vec<&str>>) -> usize {
+fn count_total_all_yes(groups: &Vec<Vec<String>>) -> usize {
     groups.iter().fold(0, |acc, group| {
         acc + count_group_all_yes(group)
     })
 }
 
 fn main() -> std::io::Result<()> {
-    let mut buffer = String::new();
-    let mut file = File::open("data/input.txt")?;
-
-    file.read_to_string(&mut buffer).unwrap();
-    let mut lines: Vec<&str> = buffer.trim().split("\n").collect();
-    let groups: Vec<Vec<&str>> =
+    let mut lines = get_file_contents("data/input.txt")?;
+    let groups: Vec<Vec<String>> =
         lines
         .as_mut_slice()
         .split(|line| line.is_empty())
@@ -88,6 +84,10 @@ fn main() -> std::io::Result<()> {
 mod tests {
     use super::*;
 
+    fn proper_vec(v: Vec<&str>) -> Vec<String> {
+        v.iter().map(|&x| String::from(x)).collect()
+    }
+
     #[test]
     fn test_individual_answers() {
         assert_eq!(0x7, individual_answers("abc"));
@@ -97,11 +97,11 @@ mod tests {
 
     #[test]
     fn test_count_group_answers() {
-        assert_eq!(3, count_group_answers(&vec!["abc"]));
-        assert_eq!(3, count_group_answers(&vec!["a", "b", "c"]));
-        assert_eq!(3, count_group_answers(&vec!["ab", "ac"]));
-        assert_eq!(1, count_group_answers(&vec!["a", "a", "a", "a"]));
-        assert_eq!(1, count_group_answers(&vec!["b"]));
+        assert_eq!(3, count_group_answers(&proper_vec(vec!["abc"])));
+        assert_eq!(3, count_group_answers(&proper_vec(vec!["a", "b", "c"])));
+        assert_eq!(3, count_group_answers(&proper_vec(vec!["ab", "ac"])));
+        assert_eq!(1, count_group_answers(&proper_vec(vec!["a", "a", "a", "a"])));
+        assert_eq!(1, count_group_answers(&proper_vec(vec!["b"])));
     }
 
     #[test]
@@ -110,11 +110,11 @@ mod tests {
             11,
             count_total_answers(
                 &vec![
-                    vec!["abc"],
-                    vec!["a", "b", "c"],
-                    vec!["ab", "ac"],
-                    vec!["a", "a", "a", "a"],
-                    vec!["b"],
+                    proper_vec(vec!["abc"]),
+                    proper_vec(vec!["a", "b", "c"]),
+                    proper_vec(vec!["ab", "ac"]),
+                    proper_vec(vec!["a", "a", "a", "a"]),
+                    proper_vec(vec!["b"]),
                 ],
             ),
         );
@@ -122,11 +122,11 @@ mod tests {
 
     #[test]
     fn test_count_group_all_yes() {
-        assert_eq!(3, count_group_all_yes(&vec!["abc"]));
-        assert_eq!(0, count_group_all_yes(&vec!["a", "b", "c"]));
-        assert_eq!(1, count_group_all_yes(&vec!["ab", "ac"]));
-        assert_eq!(1, count_group_all_yes(&vec!["a", "a", "a", "a"]));
-        assert_eq!(1, count_group_all_yes(&vec!["b"]));
+        assert_eq!(3, count_group_all_yes(&proper_vec(vec!["abc"])));
+        assert_eq!(0, count_group_all_yes(&proper_vec(vec!["a", "b", "c"])));
+        assert_eq!(1, count_group_all_yes(&proper_vec(vec!["ab", "ac"])));
+        assert_eq!(1, count_group_all_yes(&proper_vec(vec!["a", "a", "a", "a"])));
+        assert_eq!(1, count_group_all_yes(&proper_vec(vec!["b"])));
     }
 
     #[test]
@@ -135,11 +135,11 @@ mod tests {
             6,
             count_total_all_yes(
                 &vec![
-                    vec!["abc"],
-                    vec!["a", "b", "c"],
-                    vec!["ab", "ac"],
-                    vec!["a", "a", "a", "a"],
-                    vec!["b"],
+                    proper_vec(vec!["abc"]),
+                    proper_vec(vec!["a", "b", "c"]),
+                    proper_vec(vec!["ab", "ac"]),
+                    proper_vec(vec!["a", "a", "a", "a"]),
+                    proper_vec(vec!["b"]),
                 ],
             ),
         );
