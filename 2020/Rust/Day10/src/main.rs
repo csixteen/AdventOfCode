@@ -31,16 +31,13 @@ const DIFF: usize = 3;
 
 
 fn arrangements(jolts: &Vec<usize>) -> usize {
-    let mut sorted_jolts = jolts.clone();
-    &sorted_jolts.sort_unstable();
-    let len = sorted_jolts.len();
-
+    let len = jolts.len();
     let mut dp = vec![0; len];
     dp[len-1] = 1;
 
     for i in (0..len).rev() {
         for j in 1..=DIFF.min((len-1)-i) {
-            if sorted_jolts[i+j] <= sorted_jolts[i] + DIFF {
+            if jolts[i+j] <= jolts[i] + DIFF {
                 dp[i] += dp[i+j];
             }
         }
@@ -51,11 +48,8 @@ fn arrangements(jolts: &Vec<usize>) -> usize {
 
 
 fn jolt_distribution(jolts: &Vec<usize>) -> (usize, usize, usize) {
-    let mut sorted_jolts = jolts.clone();
-    &sorted_jolts.sort_unstable();
-
-    (1..sorted_jolts.len()).fold((0, 0, 0), |(a, b, c), i| {
-        match sorted_jolts[i] - sorted_jolts[i-1] {
+    (1..jolts.len()).fold((0, 0, 0), |(a, b, c), i| {
+        match jolts[i] - jolts[i-1] {
             1 => (a+1, b, c),
             2 => (a, b+1, c),
             3 => (a, b, c+1),
@@ -72,7 +66,8 @@ fn main() -> std::io::Result<()> {
         .collect();
 
     jolts.push(0); // charging outlet
-    jolts.push(jolts.iter().max().unwrap() + 3);
+    jolts.push(jolts.iter().max().unwrap() + 3); // the device
+    &jolts.sort_unstable();
 
     let (d1, _, d3) = jolt_distribution(&jolts);
 
@@ -103,27 +98,33 @@ mod tests {
 
     #[test]
     fn test_jolt_distribution1() {
-        assert_eq!(
-            (7, 0, 5),
-            jolt_distribution(&ADAPTERS1.to_vec()),
-        );
+        let mut jolts = ADAPTERS1.to_vec().clone();
+        &jolts.sort_unstable();
+
+        assert_eq!((7, 0, 5), jolt_distribution(&jolts));
     }
 
     #[test]
     fn test_jolt_distribution2() {
-        assert_eq!(
-            (22, 0, 10),
-            jolt_distribution(&ADAPTERS2.to_vec()),
-        );
+        let mut jolts = ADAPTERS2.to_vec().clone();
+        &jolts.sort_unstable();
+
+        assert_eq!((22, 0, 10), jolt_distribution(&jolts));
     }
 
     #[test]
     fn test_arrangements1() {
-        assert_eq!(8, arrangements(&ADAPTERS1.to_vec()));
+        let mut jolts = ADAPTERS1.to_vec().clone();
+        &jolts.sort_unstable();
+
+        assert_eq!(8, arrangements(&jolts));
     }
 
     #[test]
     fn test_arrangements2() {
-        assert_eq!(19208, arrangements(&ADAPTERS2.to_vec()));
+        let mut jolts = ADAPTERS2.to_vec().clone();
+        &jolts.sort_unstable();
+
+        assert_eq!(19208, arrangements(&jolts));
     }
 }
