@@ -23,14 +23,13 @@
 // https://adventofcode.com/2020/day/7
 
 use std::collections::{HashMap, HashSet};
-use std::fs::File;
-use std::io::Read;
 use std::str::FromStr;
 
+use aoc::fs::get_file_contents;
 use lazy_static::lazy_static;
 use regex::Regex;
 
-fn build_graph(rules: &Vec<&str>) -> HashMap<String, HashSet<String>> {
+fn build_graph(rules: &Vec<String>) -> HashMap<String, HashSet<String>> {
     lazy_static! {
         static ref CONTAINS: Regex = Regex::new(r"(.*) bags? contain (.*)").unwrap();
         static ref CONTAINED: Regex = Regex::new(r"(\d+) (.*) bags?").unwrap();
@@ -68,7 +67,7 @@ fn contain_color(graph: &HashMap<String, HashSet<String>>, color: &str, acc: &mu
     };
 }
 
-fn total_containing_bags(rules: &Vec<&str>, color: &str) -> usize {
+fn total_containing_bags(rules: &Vec<String>, color: &str) -> usize {
     let graph = build_graph(&rules);
     let mut acc = HashSet::new();
     contain_color(&graph, color, &mut acc);
@@ -76,7 +75,7 @@ fn total_containing_bags(rules: &Vec<&str>, color: &str) -> usize {
     acc.len()
 }
 
-fn build_inverted_graph(rules: &Vec<&str>) -> HashMap<String, HashSet<(usize, String)>> {
+fn build_inverted_graph(rules: &Vec<String>) -> HashMap<String, HashSet<(usize, String)>> {
     lazy_static! {
         static ref CONTAINS: Regex = Regex::new(r"(.*) bags? contain (.*)").unwrap();
         static ref CONTAINED: Regex = Regex::new(r"(\d+) (.*) bags?").unwrap();
@@ -114,17 +113,13 @@ fn contained_colors(graph: &HashMap<String, HashSet<(usize,String)>>, color: &st
     }
 }
 
-fn total_contained_bags(rules: &Vec<&str>, color: &str) -> usize {
+fn total_contained_bags(rules: &Vec<String>, color: &str) -> usize {
     let graph = build_inverted_graph(&rules);
     contained_colors(&graph, color)
 }
 
 fn main() -> std::io::Result<()> {
-    let mut buffer = String::new();
-    let mut file = File::open("data/input.txt")?;
-
-    file.read_to_string(&mut buffer).unwrap();
-    let lines: Vec<&str> = buffer.trim().split("\n").collect();
+    let lines = get_file_contents("data/input.txt")?;
 
     println!("Day 7 / part 1: {}", total_containing_bags(&lines, "shiny gold"));
     println!("Day 7 / part 2: {}", total_contained_bags(&lines, "shiny gold"));
@@ -158,9 +153,13 @@ mod tests {
         "dark violet bags contain no other bags.",
     ];
 
+    fn proper_vec(v: Vec<&str>) -> Vec<String> {
+        v.iter().map(|&x| String::from(x)).collect()
+    }
+
     #[test]
     fn test_build_graph() {
-        let graph = build_graph(&RULES.to_vec());
+        let graph = build_graph(&proper_vec(RULES.to_vec().clone()));
 
         assert!(graph.contains_key("shiny gold"));
         assert!(graph.get("shiny gold").unwrap().contains("bright white"));
@@ -169,12 +168,21 @@ mod tests {
 
     #[test]
     fn test_total_containing_bags() {
-        assert_eq!(4, total_containing_bags(&RULES.to_vec(), "shiny gold"));
+        assert_eq!(
+            4,
+            total_containing_bags(&proper_vec(RULES.to_vec().clone()), "shiny gold"),
+        );
     }
 
     #[test]
     fn test_total_contained_bags() {
-        assert_eq!(32, total_contained_bags(&RULES.to_vec(), "shiny gold"));
-        assert_eq!(126, total_contained_bags(&RULES2.to_vec(), "shiny gold"));
+        assert_eq!(
+            32,
+            total_contained_bags(&proper_vec(RULES.to_vec().clone()), "shiny gold"),
+        );
+        assert_eq!(
+            126,
+            total_contained_bags(&proper_vec(RULES2.to_vec().clone()), "shiny gold"),
+        );
     }
 }
