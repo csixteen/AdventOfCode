@@ -25,9 +25,10 @@
 #![allow(non_snake_case)]
 
 use std::collections::HashSet;
-use std::fs::File;
-use std::io::Read;
 use std::str::FromStr;
+
+use aoc::fs::get_file_contents;
+
 
 #[derive(Clone, Debug, PartialEq)]
 enum Instruction {
@@ -104,14 +105,9 @@ fn fix_and_execute(code: &Vec<(Instruction, i32)>) -> i32 {
     unreachable!();
 }
 
-fn main() -> std::io::Result<()> {
-    let mut buffer = String::new();
-    let mut file = File::open("data/input.txt")?;
-
-    file.read_to_string(&mut buffer).unwrap();
-    let code: Vec<(Instruction, i32)> = buffer
-        .trim()
-        .split("\n")
+fn parse_code(lines: Vec<String>) -> Vec<(Instruction, i32)> {
+    lines
+        .iter()
         .map(|line| {
             let s: Vec<&str> = line.split(" ").collect();
             let op = match s[0] {
@@ -123,8 +119,12 @@ fn main() -> std::io::Result<()> {
 
             (op, i32::from_str(s[1]).unwrap())
         })
-        .collect();
+        .collect()
+}
 
+fn main() -> std::io::Result<()> {
+    let lines = get_file_contents("data/input.txt")?;
+    let code = parse_code(lines);
     let mut p = Program::new(&code);
 
     println!("Day 8 / Part 1: {:?}", p.execute());
@@ -158,8 +158,6 @@ mod tests {
 
     #[test]
     fn test_fix_and_execute() {
-        let mut p = Program::new(&CODE.to_vec());
-
         assert_eq!(8, fix_and_execute(&CODE.to_vec()));
     }
 }
