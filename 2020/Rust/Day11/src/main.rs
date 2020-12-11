@@ -34,7 +34,7 @@ trait SeatSimulator {
     fn change_pos(&mut self, i: usize, j: usize, c: char);
     fn matrix(&mut self) -> &Vec<Vec<char>>;
     fn tolerance(&mut self) -> usize;
-    fn ahead(&mut self, row: usize, col: usize, drow: i32, dcol: i32) -> Option<(usize, usize)>;
+    fn ahead(&mut self, row: usize, col: usize, drow: i32, dcol: i32) -> (usize, usize);
 
     fn occupied_neighbours(&mut self, row: i32, col: i32) -> usize {
         let (rows, cols) = (self.matrix().len(), self.matrix()[0].len());
@@ -46,9 +46,7 @@ trait SeatSimulator {
 
                 match (usize::try_from(row + drow), usize::try_from(col + dcol)) {
                     (Ok(i), Ok(j)) if i < rows && j < cols => {
-                        if let Some(n) = self.ahead(i, j, drow, dcol) {
-                            neighbours.push(n);
-                        }
+                        neighbours.push(self.ahead(i, j, drow, dcol));
                     },
                     _ => (),
                 }
@@ -131,8 +129,8 @@ impl SeatSimulator for GridPart1 {
         &self.m
     }
 
-    fn ahead(&mut self, x: usize, y: usize, _dx: i32, _dy: i32) -> Option<(usize, usize)> {
-        Some((x, y))
+    fn ahead(&mut self, x: usize, y: usize, _dx: i32, _dy: i32) -> (usize, usize) {
+        (x, y)
     }
 }
 
@@ -159,7 +157,7 @@ impl SeatSimulator for GridPart2 {
         &self.m
     }
 
-    fn ahead(&mut self, row: usize, col: usize, drow: i32, dcol: i32) -> Option<(usize, usize)> {
+    fn ahead(&mut self, row: usize, col: usize, drow: i32, dcol: i32) -> (usize, usize) {
         let (rows, cols) = (self.matrix().len(), self.matrix()[0].len());
         let mut i = row as i32;
         let mut j = col as i32;
@@ -170,7 +168,7 @@ impl SeatSimulator for GridPart2 {
             (j as usize) < cols &&
             self.matrix()[i as usize][j as usize] == '.' {
             match (usize::try_from(i+drow), usize::try_from(j+dcol)) {
-                (Ok(i2), Ok(j2)) => {
+                (Ok(i2), Ok(j2)) if i2 < rows && j2 < cols => {
                     i = i2 as i32;
                     j = j2 as i32;
                 },
@@ -178,11 +176,7 @@ impl SeatSimulator for GridPart2 {
             }
         }
 
-        if (i as usize) < rows && (j as usize) < cols {
-            Some((i as usize, j as usize))
-        } else {
-            None
-        }
+        (i as usize, j as usize)
     }
 }
 
