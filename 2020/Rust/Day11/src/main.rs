@@ -30,6 +30,7 @@ use aoc::fs::get_file_contents;
 
 
 trait SeatSimulator {
+    fn floor_count(&mut self) -> usize;
     fn change_pos(&mut self, i: usize, j: usize, c: char);
     fn matrix(&mut self) -> &Vec<Vec<char>>;
     fn tolerance(&mut self) -> usize;
@@ -37,7 +38,7 @@ trait SeatSimulator {
 
     fn occupied_neighbours(&mut self, row: i32, col: i32) -> usize {
         let (rows, cols) = (self.matrix().len(), self.matrix()[0].len());
-        let mut neighbours = Vec::new();
+        let mut neighbours = Vec::with_capacity(8);
 
         for dcol in -1..=1 {
             for drow in -1..=1 {
@@ -65,7 +66,8 @@ trait SeatSimulator {
 
     fn single_round(&mut self, t: usize) -> usize {
         let (rows, cols) = (self.matrix().len(), self.matrix()[0].len());
-        let mut changes: Vec<(usize,usize,char)> = Vec::new();
+        let mut changes: Vec<(usize,usize,char)> =
+            Vec::with_capacity(rows*cols - self.floor_count());
         let mut total = t;
 
         for i in 0..rows {
@@ -107,15 +109,27 @@ trait SeatSimulator {
 
 struct GridPart1 {
     m: Vec<Vec<char>>,
+    fc: usize,
 }
 
 impl GridPart1 {
     fn new(m: Vec<Vec<char>>) -> Self {
-        GridPart1 { m }
+        let fc = m.iter().fold(0, |acc, line| {
+            acc + line.iter().filter(|&c| *c == '.').count()
+        });
+
+        GridPart1 {
+            m: m,
+            fc: fc,
+        }
     }
 }
 
 impl SeatSimulator for GridPart1 {
+    fn floor_count(&mut self) -> usize {
+        self.fc
+    }
+
     fn tolerance(&mut self) -> usize {
         4
     }
@@ -135,15 +149,27 @@ impl SeatSimulator for GridPart1 {
 
 struct GridPart2 {
     m: Vec<Vec<char>>,
+    fc: usize,
 }
 
 impl GridPart2 {
     fn new(m: Vec<Vec<char>>) -> Self {
-        GridPart2 { m }
+        let fc = m.iter().fold(0, |acc, line| {
+            acc + line.iter().filter(|&c| *c == '.').count()
+        });
+
+        GridPart2 {
+            m: m,
+            fc: fc,
+        }
     }
 }
 
 impl SeatSimulator for GridPart2 {
+    fn floor_count(&mut self) -> usize {
+        self.fc
+    }
+
     fn tolerance(&mut self) -> usize {
         5
     }
