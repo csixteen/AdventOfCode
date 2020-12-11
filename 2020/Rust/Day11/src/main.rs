@@ -24,7 +24,6 @@
 
 #![allow(non_snake_case)]
 
-use std::collections::HashMap;
 use std::convert::TryFrom;
 
 use aoc::fs::get_file_contents;
@@ -66,7 +65,7 @@ trait SeatSimulator {
 
     fn single_round(&mut self, t: usize) -> usize {
         let (rows, cols) = (self.matrix().len(), self.matrix()[0].len());
-        let mut changes: HashMap<(usize,usize), char> = HashMap::new();
+        let mut changes: Vec<(usize,usize,char)> = Vec::new();
         let mut total = t;
 
         for i in 0..rows {
@@ -74,11 +73,11 @@ trait SeatSimulator {
                 match self.matrix()[i][j] {
                     '.' => (),
                     'L' => if self.must_occupy(i as i32, j as i32) {
-                        changes.insert((i,j), '#');
+                        changes.push((i,j,'#'));
                         total += 1;
                     },
                     '#' => if self.must_vacate(i as i32, j as i32) {
-                        changes.insert((i,j), 'L');
+                        changes.push((i,j,'L'));
                         total -= 1;
                     },
                     _ => panic!("Unknown char"),
@@ -86,7 +85,7 @@ trait SeatSimulator {
             }
         }
 
-        for ((i, j), c) in changes.iter() {
+        for (i, j, c) in changes.iter() {
             self.change_pos(*i, *j, *c);
         }
 
