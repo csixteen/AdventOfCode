@@ -194,7 +194,7 @@ fn main() -> std::io::Result<()> {
     let mut grid2 = GridPart2::new(matrix.clone());
 
     println!("Day 11 / Part 1: {}", grid1.occupied_seats());
-    println!("Day 11 / Part 1: {}", grid2.occupied_seats());
+    println!("Day 11 / Part 2: {}", grid2.occupied_seats());
 
     Ok(())
 }
