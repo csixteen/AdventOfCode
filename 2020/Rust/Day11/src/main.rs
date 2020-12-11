@@ -24,15 +24,16 @@
 
 #![allow(non_snake_case)]
 
+use std::collections::HashMap;
 use std::convert::TryFrom;
 
 use aoc::fs::get_file_contents;
 
 
 trait SeatSimulator {
+    fn change_pos(&mut self, i: usize, j: usize, c: char);
     fn matrix(&mut self) -> &Vec<Vec<char>>;
     fn tolerance(&mut self) -> usize;
-    fn set_matrix(&mut self, m: Vec<Vec<char>>); 
     fn ahead(&mut self, row: usize, col: usize, drow: i32, dcol: i32) -> Option<(usize, usize)>;
 
     fn occupied_neighbours(&mut self, row: i32, col: i32) -> usize {
@@ -66,19 +67,20 @@ trait SeatSimulator {
     }
 
     fn single_round(&mut self, t: usize) -> usize {
-        let mut new_matrix = self.matrix().clone();
+        let (rows, cols) = (self.matrix().len(), self.matrix()[0].len());
+        let mut changes: HashMap<(usize,usize), char> = HashMap::new();
         let mut total = t;
 
-        for i in 0..new_matrix.len() {
-            for j in 0..new_matrix[0].len() {
-                match new_matrix[i][j] {
+        for i in 0..rows {
+            for j in 0..cols {
+                match self.matrix()[i][j] {
                     '.' => (),
                     'L' => if self.must_occupy(i as i32, j as i32) {
-                        new_matrix[i][j] = '#';
+                        changes.insert((i,j), '#');
                         total += 1;
                     },
                     '#' => if self.must_vacate(i as i32, j as i32) {
-                        new_matrix[i][j] = 'L';
+                        changes.insert((i,j), 'L');
                         total -= 1;
                     },
                     _ => panic!("Unknown char"),
@@ -86,7 +88,9 @@ trait SeatSimulator {
             }
         }
 
-        self.set_matrix(new_matrix);
+        for ((i, j), c) in changes.iter() {
+            self.change_pos(*i, *j, *c);
+        }
 
         total
     }
@@ -119,12 +123,12 @@ impl SeatSimulator for GridPart1 {
         4
     }
 
-    fn matrix(&mut self) -> &Vec<Vec<char>> {
-        &self.m
+    fn change_pos(&mut self, i: usize, j: usize, c: char) {
+        self.m[i][j] = c;
     }
 
-    fn set_matrix(&mut self, m: Vec<Vec<char>>) {
-        self.m = m;
+    fn matrix(&mut self) -> &Vec<Vec<char>> {
+        &self.m
     }
 
     fn ahead(&mut self, x: usize, y: usize, _dx: i32, _dy: i32) -> Option<(usize, usize)> {
@@ -147,12 +151,12 @@ impl SeatSimulator for GridPart2 {
         5
     }
 
-    fn matrix(&mut self) -> &Vec<Vec<char>> {
-        &self.m
+    fn change_pos(&mut self, i: usize, j: usize, c: char) {
+        self.m[i][j] = c;
     }
 
-    fn set_matrix(&mut self, m: Vec<Vec<char>>) {
-        self.m = m;
+    fn matrix(&mut self) -> &Vec<Vec<char>> {
+        &self.m
     }
 
     fn ahead(&mut self, row: usize, col: usize, drow: i32, dcol: i32) -> Option<(usize, usize)> {
