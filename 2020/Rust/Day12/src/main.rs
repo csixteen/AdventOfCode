@@ -123,22 +123,10 @@ impl Ferry for WaypointFerry {
     }
 
     fn rotate(&mut self, n: usize) {
-        match n {
-            90 => {
-                let tmp = self.wp_x;
-                self.wp_x = self.wp_y;
-                self.wp_y = -tmp;
-            },
-            180 => {
-                self.wp_x = -self.wp_x;
-                self.wp_y = -self.wp_y;
-            },
-            270 => {
-                let tmp = self.wp_x;
-                self.wp_x = -self.wp_y;
-                self.wp_y = tmp;
-            },
-            _ => (),
+        for _ in 0..n/90 {
+            let tmp = self.wp_x;
+            self.wp_x = self.wp_y;
+            self.wp_y = -tmp;
         }
     }
 }
