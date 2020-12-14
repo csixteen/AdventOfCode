@@ -64,6 +64,8 @@ fn extended_gcd(a: i128, b: i128) -> (i128, i128, i128) {
     }
 }
 
+// https://cronokirby.com/posts/2020/12/chinese-remainder-theorem/
+// Many thanks!!
 fn calculate(a: (i128, i128), b: (i128, i128)) -> (i128, i128) {
     let (_, m, n) = extended_gcd(a.0, b.0);
     let k = a.1*n*b.0 + b.1*m*a.0;
