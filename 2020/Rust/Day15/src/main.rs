@@ -74,12 +74,12 @@ mod tests {
 
     #[test]
     fn test_nth_number_spoken() {
-        assert_eq!(436, nth_number_spoken(vec![0, 3, 6], 2020));
-        assert_eq!(1, nth_number_spoken(vec![1, 3, 2], 2020));
-        assert_eq!(10, nth_number_spoken(vec![2, 1, 3], 2020));
-        assert_eq!(27, nth_number_spoken(vec![1, 2, 3], 2020));
-        assert_eq!(78, nth_number_spoken(vec![2, 3, 1], 2020));
-        assert_eq!(438, nth_number_spoken(vec![3, 2, 1], 2020));
+        assert_eq!(436,  nth_number_spoken(vec![0, 3, 6], 2020));
+        assert_eq!(1,    nth_number_spoken(vec![1, 3, 2], 2020));
+        assert_eq!(10,   nth_number_spoken(vec![2, 1, 3], 2020));
+        assert_eq!(27,   nth_number_spoken(vec![1, 2, 3], 2020));
+        assert_eq!(78,   nth_number_spoken(vec![2, 3, 1], 2020));
+        assert_eq!(438,  nth_number_spoken(vec![3, 2, 1], 2020));
         assert_eq!(1836, nth_number_spoken(vec![3, 1, 2], 2020));
     }
 }
