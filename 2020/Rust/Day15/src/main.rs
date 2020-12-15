@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-// https://adventofcode.com/2020/day/14
+// https://adventofcode.com/2020/day/15
 
 #![allow(non_snake_case)]
 
