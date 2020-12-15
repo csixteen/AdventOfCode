@@ -42,15 +42,12 @@ fn nth_number_spoken(numbers: Vec<usize>, k: usize) -> usize {
     let mut turn = len+1;
 
     while turn <= k {
-        if let None = seen.get(&last_number) {
-            last_number = 0;
-        } else if let Some(o) = seen.get(&last_number) {
-            let l = o.len();
-            if l == 1 {
-                last_number = 0;
-            } else {
-                last_number = o[l-1] - o[l-2];
-            }
+        match seen.get(&last_number) {
+            None => last_number = 0,
+            Some(o) => {
+                let l = o.len();
+                last_number = o[l-1] - o[0.max(l as i32 -2) as usize];
+            },
         }
 
         seen.entry(last_number).or_insert(Vec::new()).push(turn);
