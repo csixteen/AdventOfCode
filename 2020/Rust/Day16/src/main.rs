@@ -101,13 +101,16 @@ fn scanning_error_rate(other_tickets: &Vec<Ticket>, ranges: &FieldsRanges) -> us
         })
 }
 
+fn is_valid_ticket(ticket: &Ticket, ranges: &Vec<(usize, usize)>) -> bool {
+    ticket.iter().all(|field| is_valid_field(*field, ranges))
+}
+
 fn valid_tickets(other_tickets: &Vec<Ticket>, ranges: &FieldsRanges) -> Vec<Ticket> {
+    let vv = ranges.values().flat_map(|v| v.to_vec()).collect();
+
     other_tickets
         .iter()
-        .filter(|&t| {
-            let vv = ranges.values().flat_map(|v| v).cloned().collect();
-            ticket_invalid_values(t, &vv) == 0
-        })
+        .filter(|&t| is_valid_ticket(t, &vv) )
         .cloned()
         .collect()
 }
@@ -119,8 +122,8 @@ fn candidate_indices(
     let num_fields = tickets[0].len();
     let mut res = HashMap::new();
 
-    for i in 0..num_fields {
-        for (field, r) in ranges.iter() {
+    for (field, r) in ranges.iter() {
+        for i in 0..num_fields {
             if (0..tickets.len()).all(|j| {
                 is_valid_field(tickets[j][i], r)
             }) {
