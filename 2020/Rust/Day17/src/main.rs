@@ -41,23 +41,15 @@ const INPUT: [[char; 8]; 8] = [
     ['.','.','#','.','#','.','#','#'],
 ];
 
-trait Coordinate: Clone {
+trait Coordinate {
     type Item;
 
     fn neighbours(&self) -> Vec<Self::Item>;
     fn new(x: i32, y: i32) -> Self::Item;
 }
 
-#[derive(Copy,Eq,Hash,PartialEq)]
+#[derive(Clone,Copy,Eq,Hash,PartialEq)]
 struct Coord3D(i32,i32,i32);
-
-impl Clone for Coord3D {
-    fn clone(&self) -> Self {
-        let Coord3D(x,y,z) = *self;
-
-        Coord3D(x, y, z)
-    }
-}
 
 impl Coordinate for Coord3D {
     type Item = Coord3D;
@@ -78,16 +70,8 @@ impl Coordinate for Coord3D {
     }
 }
 
-#[derive(Copy,Eq,Hash,PartialEq)]
+#[derive(Clone,Copy,Eq,Hash,PartialEq)]
 struct Coord4D(i32,i32,i32,i32);
-
-impl Clone for Coord4D {
-    fn clone(&self) -> Self {
-        let Coord4D(x,y,z,w) = *self;
-
-        Coord4D(x, y, z, w)
-    }
-}
 
 impl Coordinate for Coord4D {
     type Item = Coord4D;
