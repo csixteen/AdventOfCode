@@ -25,6 +25,8 @@
 #![allow(non_snake_case)]
 
 use std::collections::HashSet;
+use std::hash::Hash;
+
 use itertools::iproduct;
 
 
@@ -39,29 +41,85 @@ const INPUT: [[char; 8]; 8] = [
     ['.','.','#','.','#','.','#','#'],
 ];
 
-#[derive(Clone,Copy,Debug,Eq,Hash,PartialEq)]
-struct Coord(i32,i32,i32,i32);
+trait Coordinate: Clone {
+    type Item;
 
-fn neighbours(coord: &Coord) -> Vec<Coord> {
-    let Coord(x,y,z,w) = coord;
-
-    iproduct!(-1..=1,-1..=1,-1..=1,-1..=1)
-        .filter(|&(dx,dy,dz,dw)| !(dx == 0 && dy == 0 && dz == 0 && dw == 0))
-        .fold(Vec::new(), |mut acc, (dx, dy, dz, dw)| {
-            acc.push(Coord(x+dx, y+dy, z+dz, w+dw));
-            acc
-        })
+    fn neighbours(&self) -> Vec<Self::Item>;
+    fn new(x: i32, y: i32) -> Self::Item;
 }
 
-fn run_cycle(active: &HashSet<Coord>) -> HashSet<Coord> {
+#[derive(Copy,Eq,Hash,PartialEq)]
+struct Coord3D(i32,i32,i32);
+
+impl Clone for Coord3D {
+    fn clone(&self) -> Self {
+        let Coord3D(x,y,z) = &self;
+
+        Coord3D(*x, *y, *z)
+    }
+}
+
+impl Coordinate for Coord3D {
+    type Item = Coord3D;
+
+    fn neighbours(&self) -> Vec<Self::Item> {
+        let Coord3D(x,y,z) = &self;
+
+        iproduct!(-1..=1,-1..=1,-1..=1)
+            .filter(|&(dx,dy,dz)| !(dx == 0 && dy == 0 && dz == 0))
+            .fold(Vec::new(), |mut acc, (dx, dy, dz)| {
+                acc.push(Coord3D(x+dx, y+dy, z+dz));
+                acc
+            })
+    }
+
+    fn new(x: i32, y: i32) -> Self::Item {
+        Coord3D(x, y, 0)
+    }
+}
+
+#[derive(Copy,Eq,Hash,PartialEq)]
+struct Coord4D(i32,i32,i32,i32);
+
+impl Clone for Coord4D {
+    fn clone(&self) -> Self {
+        let Coord4D(x,y,z,w) = &self;
+
+        Coord4D(*x, *y, *z, *w)
+    }
+}
+
+impl Coordinate for Coord4D {
+    type Item = Coord4D;
+
+    fn neighbours(&self) -> Vec<Self::Item> {
+        let Coord4D(x,y,z,w) = &self;
+
+        iproduct!(-1..=1,-1..=1,-1..=1,-1..=1)
+            .filter(|&(dx,dy,dz,dw)| !(dx == 0 && dy == 0 && dz == 0 && dw == 0))
+            .fold(Vec::new(), |mut acc, (dx, dy, dz, dw)| {
+                acc.push(Coord4D(x+dx, y+dy, z+dz, w+dw));
+                acc
+            })
+    }
+
+    fn new(x: i32, y: i32) -> Self::Item {
+        Coord4D(x, y, 0, 0)
+    }
+}
+
+fn run_cycle<T>(active: &HashSet<T>) -> HashSet<T>
+where
+    T: Coordinate<Item = T> + Copy + Clone + Eq + Hash
+{
     let mut new_active = HashSet::new();
-    let to_visit: HashSet<Coord> = active
+    let to_visit: HashSet<T> = active
         .iter()
-        .flat_map(|coord| neighbours(coord))
+        .flat_map(|coord| coord.neighbours())
         .collect();
 
     for coord in to_visit.iter() {
-        let n: Vec<Coord> = neighbours(coord)
+        let n: Vec<T> = coord.neighbours()
             .iter()
             .cloned()
             .filter(|c| active.contains(c))
@@ -75,22 +133,37 @@ fn run_cycle(active: &HashSet<Coord>) -> HashSet<Coord> {
     new_active
 }
 
-fn active_cubes(matrix: &Vec<Vec<char>>, cycles: usize) -> usize {
-    let active: HashSet<Coord> = (0..matrix[0].len())
+fn init_active_cubes<T>(matrix: &Vec<Vec<char>>) -> HashSet<T>
+where
+    T: Coordinate<Item = T> + Eq + Hash 
+{
+    (0..matrix[0].len())
         .flat_map(|x| (0..matrix.len()).map(move |y| (x, y)))
         .filter(|(x, y)| matrix[*y][*x] == '#')
         .fold(HashSet::new(), |mut acc, (x, y)| {
-            acc.insert(Coord(x as i32, y as i32, 0, 0));
+            acc.insert(T::new(x as i32, y as i32));
             acc
-        });
+        })
+}
+
+fn active_cubes<T>(matrix: &Vec<Vec<char>>, cycles: usize) -> usize
+where
+    T: Coordinate<Item = T> + Copy + Eq + Hash
+{
+    let active = init_active_cubes::<T>(matrix);
 
     (0..cycles).fold(active, |acc, _| run_cycle(&acc)).len()
 }
 
 fn main() {
-    let initial_state = INPUT.to_vec().iter().map(|row| row.to_vec()).collect();
+    let initial_state: Vec<Vec<char>> = INPUT
+        .to_vec()
+        .iter()
+        .map(|row| row.to_vec())
+        .collect();
 
-    println!("Day 17 / Part 2: {}", active_cubes(&initial_state, 6));
+    println!("Day 17 / Part 1: {}", active_cubes::<Coord3D>(&initial_state, 6));
+    println!("Day 17 / Part 2: {}", active_cubes::<Coord4D>(&initial_state, 6));
 }
 
 #[cfg(test)]
