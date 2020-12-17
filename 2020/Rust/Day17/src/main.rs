@@ -44,15 +44,13 @@ struct Coord(i32,i32,i32,i32);
 
 fn neighbours(coord: &Coord) -> Vec<Coord> {
     let Coord(x,y,z,w) = coord;
-    let mut n = Vec::new();
 
-    for (dx, dy, dz, dw) in iproduct!(-1..=1, -1..=1, -1..=1, -1..=1) {
-        if !(dx == 0 && dy == 0 && dz == 0 && dw == 0) {
-            n.push(Coord(x+dx, y+dy, z+dz, w+dw));
-        }
-    }
-
-    n
+    iproduct!(-1..=1,-1..=1,-1..=1,-1..=1)
+        .filter(|&(dx,dy,dz,dw)| !(dx == 0 && dy == 0 && dz == 0 && dw == 0))
+        .fold(Vec::new(), |mut acc, (dx, dy, dz, dw)| {
+            acc.push(Coord(x+dx, y+dy, z+dz, w+dw));
+            acc
+        })
 }
 
 fn run_cycle(active: &HashSet<Coord>) -> HashSet<Coord> {
