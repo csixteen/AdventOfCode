@@ -80,13 +80,10 @@ fn run_cycle(active: &HashSet<Coord>) -> HashSet<Coord> {
 fn active_cubes(matrix: &Vec<Vec<char>>, cycles: usize) -> usize {
     let mut active: HashSet<Coord> = HashSet::new();
 
-    for x in 0..matrix[0].len() {
-        for y in 0..matrix.len() {
-            if matrix[y][x] == '#' {
-                active.insert(Coord(x as i32, y as i32, 0, 0));
-            }
-        }
-    }
+    (0..matrix[0].len())
+        .flat_map(|x| (0..matrix.len()).map(move |y| (x, y)))
+        .filter(|(x, y)| matrix[*y][*x] == '#')
+        .for_each(|(x, y)| { active.insert(Coord(x as i32, y as i32, 0, 0)); });
 
     (0..cycles).fold(active, |acc, _| run_cycle(&acc)).len()
 }
