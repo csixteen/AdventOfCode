@@ -173,14 +173,14 @@ mod tests {
     #[test]
     fn test_active_cubes_no_cycles() {
         assert_eq!(
-            5,
+            112,
             active_cubes::<Coord3D>(
                 &vec![
                     vec!['.', '#', '.'],
                     vec!['.', '.', '#'],
                     vec!['#', '#', '#'],
                 ],
-                0,
+                6,
             ),
         );
     }
