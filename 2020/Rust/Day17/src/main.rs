@@ -53,9 +53,9 @@ struct Coord3D(i32,i32,i32);
 
 impl Clone for Coord3D {
     fn clone(&self) -> Self {
-        let Coord3D(x,y,z) = &self;
+        let Coord3D(x,y,z) = *self;
 
-        Coord3D(*x, *y, *z)
+        Coord3D(x, y, z)
     }
 }
 
@@ -83,9 +83,9 @@ struct Coord4D(i32,i32,i32,i32);
 
 impl Clone for Coord4D {
     fn clone(&self) -> Self {
-        let Coord4D(x,y,z,w) = &self;
+        let Coord4D(x,y,z,w) = *self;
 
-        Coord4D(*x, *y, *z, *w)
+        Coord4D(x, y, z, w)
     }
 }
 
