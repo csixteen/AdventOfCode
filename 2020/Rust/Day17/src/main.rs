@@ -174,7 +174,7 @@ mod tests {
     fn test_active_cubes_no_cycles() {
         assert_eq!(
             5,
-            active_cubes(
+            active_cubes::<Coord3D>(
                 &vec![
                     vec!['.', '#', '.'],
                     vec!['.', '.', '#'],
@@ -189,7 +189,7 @@ mod tests {
     fn test_active_cubes_6_cycles() {
         assert_eq!(
             848,
-            active_cubes(
+            active_cubes::<Coord4D>(
                 &vec![
                     vec!['.', '#', '.'],
                     vec!['.', '.', '#'],
