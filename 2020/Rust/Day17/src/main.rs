@@ -25,6 +25,7 @@
 #![allow(non_snake_case)]
 
 use std::collections::HashSet;
+use itertools::iproduct;
 
 
 const INPUT: [[char; 8]; 8] = [
@@ -45,15 +46,9 @@ fn neighbours(coord: &Coord) -> Vec<Coord> {
     let Coord(x,y,z,w) = coord;
     let mut n = Vec::new();
 
-    for dx in &[-1, 0, 1] {
-        for dy in &[-1, 0, 1] {
-            for dz in &[-1, 0, 1] {
-                for dw in &[-1, 0, 1] {
-                    if !(*dx == 0 && *dy == 0 && *dz == 0 && *dw == 0) {
-                        n.push(Coord(x+*dx,y+*dy,z+*dz,w+*dw));
-                    }
-                }
-            }
+    for (dx, dy, dz, dw) in iproduct!(-1..=1, -1..=1, -1..=1, -1..=1) {
+        if !(dx == 0 && dy == 0 && dz == 0 && dw == 0) {
+            n.push(Coord(x+dx, y+dy, z+dz, w+dw));
         }
     }
 
