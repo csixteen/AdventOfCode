@@ -14,6 +14,9 @@ Here is a list of references that I've found on the webs that helped me when I g
 - https://www.discoverbits.in/post/extended-euclid-algorithm-for-gcd-in-python/
 - https://cronokirby.com/posts/2020/12/chinese-remainder-theorem/
 
+### Day 17
+- https://doc.rust-lang.org/book/ch19-03-advanced-traits.html
+
 # License
 
 [MIT](https://github.com/csixteen/AdventOfCode/blob/master/LICENSE), as always.
