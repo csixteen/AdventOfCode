@@ -41,18 +41,14 @@ enum Token {
 type Expression = Vec<Token>;
 
 trait Calculator {
-    fn eval(exp: &Expression) -> i64;
+    fn eval(exp: &Expression) -> Token;
 
     fn calc(v: &mut Vec<Token>) {
         if v.len() < 3 { return () }
 
         use Token::*;
 
-        let op2 = v.pop();
-        let op = v.pop();
-        let op1 = v.pop();
-
-        match (op1, op, op2) {
+        match (v.pop(), v.pop(), v.pop()) {
             (Some(Number(x)), Some(Add), Some(Number(y))) => v.push(Number(x+y)),
             (Some(Number(x)), Some(Mul), Some(Number(y))) => v.push(Number(x*y)),
             _ => panic!("wtf"),
@@ -63,7 +59,7 @@ trait Calculator {
 struct BasicCalculator;
 
 impl Calculator for BasicCalculator {
-    fn eval(exp: &Expression) -> i64 {
+    fn eval(exp: &Expression) -> Token {
         let mut stacks: Vec<Vec<Token>> = vec![vec![]];
         let mut i = 0;
 
@@ -86,18 +82,27 @@ impl Calculator for BasicCalculator {
             }
         }
 
-        if let Token::Number(n) = stacks[0][0] {
-            n
-        } else {
-            panic!("wtf")
-        }
+        stacks[0][0]
     }
 }
 
 struct AdvancedCalculator;
 
 impl Calculator for AdvancedCalculator {
-    fn eval(exp: &Expression) -> i64 {
+    fn eval(exp: &Expression) -> Token {
+        fn _calcWhile(v: &mut Vec<Token>) {
+            while v.len() > 1 {
+                AdvancedCalculator::calc(v);
+            }
+        }
+
+        fn _calcWhileAdd(v: &mut Vec<Token>) {
+            while v.len() > 1 &&
+                v[v.len() - 2] == Token::Add {
+                AdvancedCalculator::calc(v);
+            }
+        }
+
         let mut stacks: Vec<Vec<Token>> = vec![vec![]];
         let mut i = 0;
 
@@ -106,34 +111,24 @@ impl Calculator for AdvancedCalculator {
                 Token::Add | Token::Mul => stacks[i].push(*token),
                 Token::LeftParen => { stacks.push(Vec::new()); i += 1; },
                 Token::RightParen => {
-                    while stacks[i].len() > 1 { Self::calc(&mut stacks[i]); }
+                    _calcWhile(&mut stacks[i]);
                     if let Some(n) = stacks[i].pop() {
                         stacks.pop();
                         i -= 1;
                         stacks[i].push(n);
-                    }
-                    while stacks[i].len() > 1 && 
-                        stacks[i][stacks[i].len() - 2] == Token::Add {
-                        Self::calc(&mut stacks[i]);
+                        _calcWhileAdd(&mut stacks[i]);
                     }
                 },
                 Token::Number(_) => {
                     stacks[i].push(*token);
-                    while stacks[i].len() > 1 && 
-                        stacks[i][stacks[i].len() - 2] == Token::Add {
-                        Self::calc(&mut stacks[i]);
-                    }
+                    _calcWhileAdd(&mut stacks[i]);
                 },
             }
         }
 
-        while stacks[0].len() > 1 { Self::calc(&mut stacks[0]); }
+        _calcWhile(&mut stacks[0]);
 
-        if let Token::Number(n) = stacks[0][0] {
-            n
-        } else {
-            panic!("wtf")
-        }
+        stacks[0][0]
     }
 }
 
@@ -175,7 +170,11 @@ where
     lines
         .iter()
         .fold(0, |acc, line| {
-            acc + T::eval(&parse(line))
+            if let Token::Number(x) = T::eval(&parse(line)) {
+                acc + x
+            } else {
+                panic!("wtf")
+            }
         })
 }
 
@@ -191,6 +190,7 @@ fn main() -> std::io::Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use Token::*;
 
     #[test]
     fn test_parse() {
@@ -224,36 +224,36 @@ mod tests {
     #[test]
     fn test_eval_basic() {
         let exp = parse(&"1 + 2 * 3".to_string());
-        assert_eq!(9, BasicCalculator::eval(&exp));
+        assert_eq!(Number(9), BasicCalculator::eval(&exp));
 
         let exp = parse(&"2 * 3 + (4 * 5)".to_string());
-        assert_eq!(26, BasicCalculator::eval(&exp));
+        assert_eq!(Number(26), BasicCalculator::eval(&exp));
 
         let exp = parse(&"5 + (8 * 3 + 9 + 3 * 4 * 3)".to_string());
-        assert_eq!(437, BasicCalculator::eval(&exp));
+        assert_eq!(Number(437), BasicCalculator::eval(&exp));
     }
 
     #[test]
     fn test_eval_advanced() {
         let exp = parse(&"1 + (2 * 3) + (4 * (5 + 6))".to_string());
-        assert_eq!(51, AdvancedCalculator::eval(&exp));
+        assert_eq!(Number(51), AdvancedCalculator::eval(&exp));
 
         let exp = parse(&"2 * 3 + (4 * 5)".to_string());
-        assert_eq!(46, AdvancedCalculator::eval(&exp));
+        assert_eq!(Number(46), AdvancedCalculator::eval(&exp));
 
         let exp = parse(&"5 + (8 * 3 + 9 + 3 * 4 * 3)".to_string());
-        assert_eq!(1445, AdvancedCalculator::eval(&exp));
+        assert_eq!(Number(1445), AdvancedCalculator::eval(&exp));
 
         let exp = parse(&"5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))".to_string());
-        assert_eq!(669060, AdvancedCalculator::eval(&exp));
+        assert_eq!(Number(669060), AdvancedCalculator::eval(&exp));
 
         let exp = parse(&"((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2".to_string());
-        assert_eq!(23340, AdvancedCalculator::eval(&exp));
+        assert_eq!(Number(23340), AdvancedCalculator::eval(&exp));
 
         let exp = parse(&"((((2 * 3) + 4) * 5) + 6)".to_string());
-        assert_eq!(56, AdvancedCalculator::eval(&exp));
+        assert_eq!(Number(56), AdvancedCalculator::eval(&exp));
 
         let exp = parse(&"(2 * (3 + (4 * (5 + 6))))".to_string());
-        assert_eq!(94, AdvancedCalculator::eval(&exp));
+        assert_eq!(Number(94), AdvancedCalculator::eval(&exp));
     }
 }
