@@ -74,7 +74,11 @@ fn match_rule(s: &str, i: usize, rule: Rule, g: &Grammar) -> Option<usize> {
 
 fn valid_string(s: &str, g: &Grammar) -> bool {
     match match_rule(s, 0, Rule::Branch(0), g) {
-        Some(i) => i == s.len(),
+        Some(i) => if i >= s.len() {
+            true
+        } else {
+            valid_string(&s[i..], g)
+        },
         None => false,
     }
 }
@@ -216,7 +220,60 @@ mod tests {
         );
 
         assert!(valid_string("a", &grammar));
-        // Should have passed. Fixing this will probably do the trick
-        // assert!(valid_string("aa", &grammar));
+        assert!(valid_string("aa", &grammar));
+        assert!(valid_string("ab", &grammar));
+        assert!(valid_string("abab", &grammar));
+    }
+
+    #[test]
+    fn test_valid_string_advanced2() {
+        let grammar = build_grammar(
+            &vec![
+                "42: 9 14 | 10 1".to_string(),
+                "9: 14 27 | 1 26".to_string(),
+                "10: 23 14 | 28 1".to_string(),
+                "1: \"a\"".to_string(),
+                "11: 42 31 | 42 11 31".to_string(),
+                "5: 1 14 | 15 1".to_string(),
+                "19: 14 1 | 14 14".to_string(),
+                "12: 24 14 | 19 1".to_string(),
+                "16: 15 1 | 14 14".to_string(),
+                "31: 14 17 | 1 13".to_string(),
+                "6: 14 14 | 1 14".to_string(),
+                "2: 1 24 | 14 4".to_string(),
+                "0: 8 11".to_string(),
+                "13: 14 3 | 1 12".to_string(),
+                "15: 1 | 14".to_string(),
+                "17: 14 2 | 1 7".to_string(),
+                "23: 25 1 | 22 14".to_string(),
+                "28: 16 1".to_string(),
+                "4: 1 1".to_string(),
+                "20: 14 14 | 1 15".to_string(),
+                "3: 5 14 | 16 1".to_string(),
+                "27: 1 6 | 14 18".to_string(),
+                "14: \"b\"".to_string(),
+                "21: 14 1 | 1 14".to_string(),
+                "25: 1 1 | 1 14".to_string(),
+                "22: 14 14".to_string(),
+                "8: 42 | 42 8".to_string(),
+                "26: 14 22 | 1 20".to_string(),
+                "18: 15 15".to_string(),
+                "7: 14 5 | 1 21".to_string(),
+                "24: 14 1".to_string(),
+            ],
+        );
+
+        assert!(valid_string("bbabbbbaabaabba", &grammar));
+        //assert!(valid_string("babbbbaabbbbbabbbbbbaabaaabaaa", &grammar));
+        assert!(valid_string("aaabbbbbbaaaabaababaabababbabaaabbababababaaa", &grammar));
+        //assert!(valid_string("bbbbbbbaaaabbbbaaabbabaaa", &grammar));
+        //assert!(valid_string("bbbababbbbaaaaaaaabbababaaababaabab", &grammar));
+        assert!(valid_string("ababaaaaaabaaab", &grammar));
+        assert!(valid_string("ababaaaaabbbaba", &grammar));
+        assert!(valid_string("baabbaaaabbaaaababbaababb", &grammar));
+        //assert!(valid_string("abbbbabbbbaaaababbbbbbaaaababb", &grammar));
+        //assert!(valid_string("aaaaabbaabaaaaababaa", &grammar));
+        //assert!(valid_string("aaaabbaabbaaaaaaabbbabbbaaabbaabaaa", &grammar));
+        //assert!(valid_string("aabbbbbaabbbaaaaaabbbbbababaaaaabbaaabba", &grammar));
     }
 }
