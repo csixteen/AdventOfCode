@@ -216,5 +216,7 @@ mod tests {
         );
 
         assert!(valid_string("a", &grammar));
+        // Should have passed. Fixing this will probably do the trick
+        // assert!(valid_string("aa", &grammar));
     }
 }
