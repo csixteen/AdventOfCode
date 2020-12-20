@@ -123,7 +123,8 @@ fn main() -> std::io::Result<()> {
     }
 
     // Extract the corners: they will be the tiles whose number of shared
-    // edges divided by 2 is 2.
+    // edges divided by 2 is 2. This is because if two Tiles share two edges,
+    // then they will also share the two edges reversed.
     let corners: Vec<&i32> = shared
         .iter()
         .filter(|&(_, sum)| sum / 2 == 2)
