@@ -24,7 +24,7 @@
 
 #![allow(non_snake_case)]
 
-use std::collections::{HashMap,HashSet};
+use std::collections::HashMap;
 use std::str::FromStr;
 
 use aoc::fs::get_file_contents;
@@ -82,17 +82,10 @@ impl Tile {
 
         edges
     }
-
-    fn intersection(&self, other: &Tile) -> HashSet<String> {
-        let this_set: HashSet<String> = self.all_edges().iter().cloned().collect();
-        let other_set: HashSet<String> = other.all_edges().iter().cloned().collect();
-
-        this_set.intersection(&other_set).cloned().collect()
-    }
 }
 
 fn main() -> std::io::Result<()> {
-    let lines = get_file_contents("data/input.txt")?;
+    let lines = get_file_contents("data/sample.txt")?;
     let raw_tiles = lines.into_iter().group_by(|line| !line.is_empty());
     let grouped: Vec<Vec<String>> = raw_tiles
         .into_iter()
@@ -109,31 +102,34 @@ fn main() -> std::io::Result<()> {
             acc
         });
 
-    // Create a HashMap with the number of edges that each
-    // Tile shares with the other Tiles.
-    let mut shared: HashMap<i32, usize> = HashMap::new();
-    let all_ids: &Vec<&i32> = &tiles.keys().collect();
+    // Builds a HashMap that maps the edges to all the Tiles
+    // that use them.
+    let mut edges: HashMap<String, Vec<&Tile>> = HashMap::new();
 
-    for (&id1, &id2) in all_ids.iter().cartesian_product(all_ids.iter()) {
-        if id1 != id2 {
-            let c = tiles.get(id1).unwrap().intersection(tiles.get(id2).unwrap()).len();
-
-            *shared.entry(*id1).or_insert(0) += c;
+    for tile in tiles.values() {
+        for e in tile.all_edges() {
+            edges.entry(e).or_insert(Vec::new()).push(tile);
         }
     }
 
-    // Extract the corners: they will be the tiles whose number of shared
-    // edges divided by 2 is 2. This is because if two Tiles share two edges,
-    // then they will also share the two edges reversed.
-    let corners: Vec<&i32> = shared
-        .iter()
-        .filter(|&(_, sum)| sum / 2 == 2)
-        .map(|(id, _)| id)
-        .collect();
+    // Finds the corners, which are the Tiles that only have two
+    // edges shared with other Tiles.
+    let mut corners: Vec<&Tile> = Vec::with_capacity(4);
 
-    let product = corners.iter().fold(1_i64, |acc, &c| acc * (*c as i64));
+    for t in tiles.values() {
+        let c = t.edges().iter().fold(0, |acc, e| {
+            acc + (edges.get(e).unwrap().len() - 1)
+        });
 
-    println!("Day 20 / Part1: {}", product);
+        if c == 2 {
+            corners.push(t);
+        }
+    }
+
+    // Calculates the product of the four corners
+    let p = corners.iter().map(|t| t.id).fold(1_i64, |acc, id| acc * (id as i64));
+
+    println!("Day 20 / Part 1: {}", p);
 
     Ok(())
 }
