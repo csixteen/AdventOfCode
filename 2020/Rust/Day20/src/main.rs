@@ -25,78 +25,13 @@
 #![allow(non_snake_case)]
 
 use std::collections::HashMap;
-use std::str::FromStr;
 
 use aoc::fs::get_file_contents;
 use itertools::Itertools;
 
+mod img;
 
-type Edge = String;
-type Matrix = Vec<String>;
-
-
-#[derive(Clone,Debug,Eq,Hash,PartialEq)]
-struct Tile {
-    id: i32,
-    matrix: Matrix,
-}
-
-impl Tile {
-    fn new(lines: &Vec<String>) -> Self {
-        Tile {
-            id: i32::from_str(&lines[0].split(':').collect::<Vec<&str>>()[0][5..]).unwrap(),
-            matrix: lines[1..].to_vec(),
-        }
-    }
-
-    fn left_edge(&self) -> Edge {
-        (0..self.matrix.len())
-            .map(|row| self.matrix[row].chars().nth(0).unwrap())
-            .collect()
-    }
-
-    fn right_edge(&self) -> Edge {
-        let l = self.matrix[0].len();
-
-        (0..self.matrix.len())
-            .map(|row| self.matrix[row].chars().nth(l-1).unwrap())
-            .collect()
-    }
-
-    fn edges(&self) -> Vec<Edge> {
-        vec![
-            self.matrix[0].to_string(),
-            self.matrix.iter().last().unwrap().to_string(),
-            self.left_edge(),
-            self.right_edge(),
-        ]
-    }
-
-    fn all_edges(&self) -> Vec<Edge> {
-        let mut edges = self.edges();
-        edges.append(&mut self.edges()
-            .iter()
-            .map(|e| e.chars().rev().collect())
-            .collect()
-        );
-
-        edges
-    }
-
-    fn strip_border(&self) -> Tile {
-        let height = self.matrix.len();
-        let width = height;
-        let new_matrix = self.matrix[1..=height-1].to_vec();
-
-        Tile {
-            id: self.id,
-            matrix: new_matrix
-                .iter()
-                .map(|row| row[1..=width-1].to_string())
-                .collect()
-        }
-    }
-}
+use img::{tile::Tile,image::Image};
 
 fn main() -> std::io::Result<()> {
     let lines = get_file_contents("data/sample.txt")?;
@@ -144,6 +79,12 @@ fn main() -> std::io::Result<()> {
     let p = corners.iter().map(|t| t.id).fold(1_i64, |acc, id| acc * (id as i64));
 
     println!("Day 20 / Part 1: {}", p);
+
+    let mut image = Image::new((tiles.len() as f64).sqrt() as usize);
+    image.init(corners[0], &edges);
+    //image.place_tiles(&edges);
+
+    println!("{:?}", image);
 
     Ok(())
 }
