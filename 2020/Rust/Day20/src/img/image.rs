@@ -63,7 +63,6 @@ impl Image {
     }
 
     fn choose_tile(&self, pt: &Tile, pe: String, e: TileEdge, edge_map: &EdgeMap) -> Tile {
-        println!("({}) choose_tile", self.N);
         let candidate = edge_map.get(&pe).unwrap()
             .iter()
             .filter(|&t| t.id != pt.id)
@@ -118,12 +117,3 @@ impl Image {
         }
     }
 }
-
-//impl fmt::Display for Image {
-//    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-//        let tile_size = self.tiles[0][0].size();
-//        let N = self.tiles.
-//
-//        write!(f, "{}", t.join("\n"))
-//    }
-//}

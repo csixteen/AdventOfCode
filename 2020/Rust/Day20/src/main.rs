@@ -80,11 +80,5 @@ fn main() -> std::io::Result<()> {
 
     println!("Day 20 / Part 1: {}", p);
 
-    let mut image = Image::new((tiles.len() as f64).sqrt() as usize);
-    image.init(corners[0], &edges);
-    //image.place_tiles(&edges);
-
-    println!("{:?}", image);
-
     Ok(())
 }
