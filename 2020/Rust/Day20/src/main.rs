@@ -82,6 +82,20 @@ impl Tile {
 
         edges
     }
+
+    fn strip_border(&self) -> Tile {
+        let height = self.matrix.len();
+        let width = height;
+        let new_matrix = self.matrix[1..=height-1].to_vec();
+
+        Tile {
+            id: self.id,
+            matrix: new_matrix
+                .iter()
+                .map(|row| row[1..=width-1].to_string())
+                .collect()
+        }
+    }
 }
 
 fn main() -> std::io::Result<()> {
