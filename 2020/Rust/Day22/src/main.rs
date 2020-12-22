@@ -35,10 +35,10 @@ enum Player {
     Crab,
 }
 
-type Hand = VecDeque<u32>;
+type Hand = VecDeque<usize>;
 
 trait GamePlay {
-    fn play_game(you: &[u32], crab: &[u32]) -> (Player, Hand);
+    fn play_game(you: &[usize], crab: &[usize]) -> (Player, Hand);
 
     fn round_winner(you: &Hand, crab: &Hand) -> Player {
         match you[0].cmp(&crab[0]) {
@@ -48,34 +48,34 @@ trait GamePlay {
         }
     }
 
-    fn game_winner(you: &Hand, crab: &Hand) -> Option<(Player, Hand)> {
+    fn game_winner(you: &Hand, crab: &Hand) -> Option<Player> {
         if you.is_empty() {
-            Some((Player::Crab, crab.clone()))
+            Some(Player::Crab)
         } else if crab.is_empty() {
-            Some((Player::You, you.clone()))
+            Some(Player::You)
         } else {
             None
         }
     }
 
-    fn score(hand: &Hand) -> u32 {
+    fn score(hand: &Hand) -> usize {
         hand
             .iter()
             .zip((1..=hand.len()).rev())
-            .fold(0_u32, |acc, (card, i)| acc + card*i as u32)
+            .fold(0_usize, |acc, (card, i)| acc + card*i as usize)
     }
 }
 
 struct RegularCombat;
 
 impl GamePlay for RegularCombat {
-    fn play_game(hand1: &[u32], hand2: &[u32]) -> (Player, Hand) {
+    fn play_game(hand1: &[usize], hand2: &[usize]) -> (Player, Hand) {
         let mut you = VecDeque::from_iter(hand1.to_vec().iter().cloned());
         let mut crab = VecDeque::from_iter(hand2.to_vec().iter().cloned());
 
         loop {
-            if let Some((p, h)) = Self::game_winner(&you, &crab) {
-                return (p, h)
+            if let Some(p) = Self::game_winner(&you, &crab) {
+                return (p, if p == Player::You { you } else { crab })
             }
 
             match Self::round_winner(&you, &crab) {
@@ -115,7 +115,7 @@ impl RecursiveCombat {
             let cp = Self::hand_to_string(&crab);
 
             if past_hands.contains(&(yp.to_string(), cp.to_string())) {
-                return (Player::You, you.to_owned())
+                return (Player::You, you)
             }
 
             // No repeated hands
@@ -126,13 +126,9 @@ impl RecursiveCombat {
             // the winner of the round. If not, the winner of the round is
             // determined using the normal rules.
             let winner = if Self::go_recursive(&you, &crab) {
-                let new_you = VecDeque::from_iter(
-                    you.iter().skip(1).take(you[0] as usize).cloned()
-                );
-                let new_crab = VecDeque::from_iter(
-                    crab.iter().skip(1).take(crab[0] as usize).cloned()
-                );
-                let (w, _) = Self::play(new_you, new_crab);
+                let ny = VecDeque::from_iter(you.iter().skip(1).take(you[0]).cloned());
+                let nc = VecDeque::from_iter(crab.iter().skip(1).take(crab[0]).cloned());
+                let (w, _) = Self::play(ny, nc);
                 w
             } else {
                 Self::round_winner(&you, &crab)
@@ -149,15 +145,15 @@ impl RecursiveCombat {
                 },
             }
 
-            if let Some((p, h)) = Self::game_winner(&you, &crab) {
-                return (p, h)
+            if let Some(p) = Self::game_winner(&you, &crab) {
+                return (p, if p == Player::You { you } else { crab })
             }
         }
     }
 }
 
 impl GamePlay for RecursiveCombat {
-    fn play_game(hand1: &[u32], hand2: &[u32]) -> (Player, Hand) {
+    fn play_game(hand1: &[usize], hand2: &[usize]) -> (Player, Hand) {
         let you = VecDeque::from_iter(hand1.to_vec().iter().cloned());
         let crab = VecDeque::from_iter(hand2.to_vec().iter().cloned());
 
@@ -165,7 +161,7 @@ impl GamePlay for RecursiveCombat {
     }
 }
 
-fn crab_combat<T>(hand1: &[u32], hand2: &[u32]) -> u32
+fn crab_combat<T>(hand1: &[usize], hand2: &[usize]) -> usize
 where
     T: GamePlay
 {
@@ -173,7 +169,7 @@ where
     T::score(&winner_hand)
 }
 
-const PLAYER1: [u32; 25] = [
+const PLAYER1: [usize; 25] = [
     21, 22, 33, 29, 43,
     35, 8,  30, 50, 44,
     9,  42, 45, 16, 12,
@@ -181,7 +177,7 @@ const PLAYER1: [u32; 25] = [
     25, 47, 5,  24, 19,
 ];
 
-const PLAYER2: [u32; 25] = [
+const PLAYER2: [usize; 25] = [
     3,  40, 37, 14, 1,
     13, 49, 41, 28, 48,
     18, 7,  23, 38, 32,
