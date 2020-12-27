@@ -37,18 +37,18 @@ fn process_steps(line: &String) -> (i32, i32) {
     let mut i = 0;
 
     while i < len {
-        match line.chars().nth(i).unwrap() {
-            'e' => x += 2,
-            'w' => x -= 2,
-            'n' => {
+        match line.chars().nth(i) {
+            Some('e') => x += 2,
+            Some('w') => x -= 2,
+            Some('n') => {
                 y += 1;
                 i += 1;
-                x += if line.chars().nth(i).unwrap() == 'e' { 1 } else { -1 };
+                x += if line.chars().nth(i) == Some('e') { 1 } else { -1 };
             },
-            's' => {
+            Some('s') => {
                 y -= 1;
                 i += 1;
-                x += if line.chars().nth(i).unwrap() == 'e' { 1 } else { -1 };
+                x += if line.chars().nth(i) == Some('e') { 1 } else { -1 };
             },
             _ => panic!("Unknown direction"),
         }
@@ -106,13 +106,7 @@ fn process_day(tiles: &Tiles) -> Tiles {
 }
 
 fn art_exhibit(lines: &Vec<String>, days: usize) -> usize {
-    let mut tiles = black_tiles(lines);
-
-    for _ in 0..days {
-        tiles = process_day(&tiles);
-    }
-
-    tiles.len()
+    (0..days).fold(black_tiles(lines), |acc, _| process_day(&acc)).len()
 }
 
 fn main() -> std::io::Result<()> {
