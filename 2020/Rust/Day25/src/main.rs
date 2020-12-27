@@ -30,17 +30,13 @@ fn calculate_loop_size(subj: i64, pubkey: i64) -> usize {
 
     loop {
         if val == pubkey { return l; }
-        val *= subj;
-        val = val % 20201227;
+        val = (val * subj) % 20201227;
         l += 1;
     }
 }
 
 fn generate_encryption_key(loop_size: usize, pubkey: i64) -> i64 {
-    (0..loop_size).fold(1, |acc, _| {
-        let v = acc * pubkey;
-        v % 20201227
-    })
+    (0..loop_size).fold(1, |acc, _| (acc * pubkey) % 20201227)
 }
 
 fn combo_breaker<'a>(pubkey1: i64, pubkey2: i64) -> Result<i64, &'a str> {
