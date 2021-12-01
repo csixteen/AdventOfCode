@@ -27,7 +27,7 @@ larger_than xs = l_than xs (head xs) 0
 
 
 -- Solves part 2, by counting the number of sliding windows of length 3 that
--- are larger than the previous sliding window. This is very generic (it wouldn't
+-- are larger than the previous sliding window. This isn't very generic (it wouldn't
 -- work for a N-size sliding window.
 larger_than_sliding :: [Integer] -> Integer
 larger_than_sliding xs@(_:_:_:_) = l_than (drop 1 xs) (sum $ (take 3 xs)) 0
