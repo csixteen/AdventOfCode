@@ -5,39 +5,26 @@ import System.IO
 import Text.Read
 
 
-solve :: FilePath -> ([Integer] -> Integer) -> IO Integer
-solve fileName f =
+solve :: FilePath -> Int -> IO Integer
+solve fileName n =
   do xs <- listFromFile fileName
      case xs of
        Nothing  -> error "Bad input"
-       Just xs' -> return (f xs')
+       Just xs' -> return (larger xs' n)
 
 
--- Solves part 1, by simply counting the number of entries in the list
--- that are larger than the previous one.
-larger_than :: [Integer] -> Integer
-larger_than [] = error "Empty list!"
-larger_than [_] = 0
-larger_than xs = l_than xs (head xs) 0
+-- Takes a list of Integers and the size of a sliding winndow and
+-- returns the number of sliding windows whose sum is greater than
+-- the sum of the previous window.
+
+larger :: [Integer] -> Int -> Integer
+larger xs n | length xs < n = error "Bad list!"
+            | otherwise     = l_than (tail xs) (sum $ take n xs) 0
   where
-    l_than [] _ acc = acc
-    l_than (y:ys) prev acc =
-          let new_acc = if y > prev then acc + 1 else acc
-          in l_than ys y new_acc
-
-
--- Solves part 2, by counting the number of sliding windows of length 3 that
--- are larger than the previous sliding window. This isn't very generic (it wouldn't
--- work for a N-size sliding window.
-larger_than_sliding :: [Integer] -> Integer
-larger_than_sliding xs@(_:_:_:_) = l_than (drop 1 xs) (sum $ (take 3 xs)) 0
-  where
-    l_than xs' prev acc | l < 3 = acc
-                        | otherwise = let new_prev = sum $ take 3 xs'
-                                          new_acc  = if new_prev > prev then acc + 1 else acc
-                                      in l_than (drop 1 xs') new_prev new_acc
-                        where l = length xs'
-larger_than_sliding _ = error "Bad list!"
+    l_than xs' prev acc | length xs' < n = acc
+                        | otherwise      = let new_prev = sum $ take n xs'
+                                               new_acc  = if new_prev > prev then acc + 1 else acc
+                                           in l_than (tail xs') new_prev new_acc
 
 
 -- -----------------------------------------------------------

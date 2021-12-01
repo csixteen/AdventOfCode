@@ -4,7 +4,7 @@ import Day1
 
 main :: IO ()
 main =
-  do x <- Day1.solve "data/day1_input.txt" Day1.larger_than
+  do x <- Day1.solve "data/day1_input.txt" 1
      putStrLn $ "Day1 (part 1): " ++ (show x)
-     x <- Day1.solve "data/day1_input.txt" Day1.larger_than_sliding
+     x <- Day1.solve "data/day1_input.txt" 3
      putStrLn $ "Day1 (part 2): " ++ (show x)
