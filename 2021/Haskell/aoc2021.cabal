@@ -25,7 +25,8 @@ executable aoc2021
     main-is:          Main.hs
 
     -- Modules included in this executable, other than Main.
-    other-modules: Day1
+    other-modules:
+        Day1
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
@@ -37,9 +38,10 @@ test-suite unit-test
   type: exitcode-stdio-1.0
   main-is: UnitTest.hs
   other-modules:
-      Path_Testing
+      Day1
   hs-source-dirs:
       test
+    , app
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5

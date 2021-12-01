@@ -1,5 +1,7 @@
 module Day1 where
 
+-- Takes a file path and an integer representing the sliding window
+-- size. To solve Part 1, make n = 1.
 
 solve :: FilePath -> Int -> IO Integer
 solve fileName n =
@@ -20,6 +22,12 @@ larger xs n | length xs < n = error "Bad list!"
                                                new_acc  = if new_prev > prev then acc + 1 else acc
                                            in l_than (tail xs') new_prev new_acc
 
+
+-- -----------------------------------------------------
+--                   Helpers
+
+-- Takes a file path an returns a list with each line
+-- read as an Integer.
 
 listFromFile :: FilePath -> IO [Integer]
 listFromFile fileName =
