@@ -3,6 +3,7 @@ module Day2 where
 import Data.List
 
 
+ -- (Horizontal position, depth, aim)
 type Vec = (Int, Int, Int)
 
 data Dir = Up Int
@@ -18,7 +19,7 @@ solve fileName =
      return (h*d)
 
 
--- Take a list of directions and an initial position
+-- Takes a list of directions and an initial position
 -- and returns the final position after having navigated
 -- according to the directions.
 navigate :: Vec -> [Dir] -> Vec
@@ -35,6 +36,10 @@ move (h, d, a) dir =
     Forward n -> (h+n, d+(a*n), a)
 
 
+-- -----------------------------------------------------
+--                   Helpers
+
+-- Takes a file path an returns a list of directions.
 
 directionsFromFile :: FilePath -> IO [Dir]
 directionsFromFile fileName =
@@ -50,3 +55,4 @@ toDir [d, n] =
     "up"      -> Up (read n :: Int)
     "down"    -> Down (read n :: Int)
     _         -> error "Unknown direction"
+toDir _ = error "Bad input!"
