@@ -2,7 +2,8 @@ module Day2 where
 
 import Data.List
 
-type Vec = (Int, Int)
+
+type Vec = (Int, Int, Int)
 
 data Dir = Up Int
          | Down Int
@@ -13,7 +14,7 @@ data Dir = Up Int
 solve :: FilePath -> IO Int
 solve fileName =
   do directions <- directionsFromFile fileName
-     let (h, d) = navigate (0, 0) directions
+     let (h, d, _) = navigate (0, 0, 0) directions
      return (h*d)
 
 
@@ -27,11 +28,11 @@ navigate pos dirs = foldl' move pos dirs
 -- Takes a Vec that represents a position and a direction
 -- and returns a new position.
 move :: Vec -> Dir -> Vec
-move (h, d) dir =
+move (h, d, a) dir =
   case dir of
-    Up n      -> (h, d-n)
-    Down n    -> (h, d+n)
-    Forward n -> (h+n, d)
+    Up n      -> (h, d, a-n)
+    Down n    -> (h, d, a+n)
+    Forward n -> (h+n, d+(a*n), a)
 
 
 
