@@ -12,27 +12,37 @@ data Dir = Up Int
   deriving Show
 
 
-solve :: FilePath -> IO Int
-solve fileName =
+solve :: FilePath -> (Vec -> Dir -> Vec) -> IO Int
+solve fileName f =
   do directions <- directionsFromFile fileName
-     let (h, d, _) = navigate (0, 0, 0) directions
+     let (h, d, _) = navigate (0, 0, 0) directions f
      return (h*d)
 
 
 -- Takes a list of directions and an initial position
 -- and returns the final position after having navigated
 -- according to the directions.
-navigate :: Vec -> [Dir] -> Vec
-navigate pos dirs = foldl' move pos dirs
+navigate :: Vec -> [Dir] -> (Vec -> Dir -> Vec) -> Vec
+navigate pos dirs f = foldl' f pos dirs
 
 
 -- Takes a Vec that represents a position and a direction
--- and returns a new position.
-move :: Vec -> Dir -> Vec
-move (h, d, a) dir =
+-- and returns a new position (part 1)
+move_depth :: Vec -> Dir -> Vec
+move_depth (h, d, a) dir =
   case dir of
-    Up n      -> (h, d, a-n)
-    Down n    -> (h, d, a+n)
+    Up n      -> (h,   d-n, a)
+    Down n    -> (h,   d+n, a)
+    Forward n -> (h+n, d,   a)
+
+
+-- Takes a Vec that represents a position and a direction
+-- and returns a new position (part 2)
+move_aim :: Vec -> Dir -> Vec
+move_aim (h, d, a) dir =
+  case dir of
+    Up n      -> (h,   d,       a-n)
+    Down n    -> (h,   d,       a+n)
     Forward n -> (h+n, d+(a*n), a)
 
 
