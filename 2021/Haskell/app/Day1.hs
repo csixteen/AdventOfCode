@@ -3,25 +3,21 @@ module Day1 where
 -- Takes a file path and an integer representing the sliding window
 -- size. To solve Part 1, make n = 1.
 
-solve :: FilePath -> Int -> IO Integer
+solve :: FilePath -> Int -> IO Int
 solve fileName n =
   do xs <- listFromFile fileName
-     return (larger xs n)
+     let res = negatives $ diff_list $ sum_list xs n
+     return res
 
+negatives :: [Int] -> Int
+negatives xs = length $ filter (< 0) xs
 
--- Takes a list of Integers and the size of a sliding winndow and
--- returns the number of sliding windows whose sum is greater than
--- the sum of the previous window.
+diff_list :: [Int] -> [Int]
+diff_list xs = fmap (uncurry (-)) $ zip xs (tail xs)
 
-larger :: [Integer] -> Int -> Integer
-larger xs n | length xs < n = error "Bad list!"
-            | otherwise     = l_than (tail xs) (sum $ take n xs) 0
-  where
-    l_than xs' prev acc | length xs' < n = acc
-                        | otherwise      = let new_prev = sum $ take n xs'
-                                               new_acc  = if new_prev > prev then acc + 1 else acc
-                                           in l_than (tail xs') new_prev new_acc
-
+sum_list :: [Int] -> Int -> [Int]
+sum_list xs n | length xs < n = []
+              | otherwise     = (sum (take n xs)) : sum_list (tail xs) n
 
 -- -----------------------------------------------------
 --                   Helpers
@@ -29,8 +25,8 @@ larger xs n | length xs < n = error "Bad list!"
 -- Takes a file path an returns a list with each line
 -- read as an Integer.
 
-listFromFile :: FilePath -> IO [Integer]
+listFromFile :: FilePath -> IO [Int]
 listFromFile fileName =
   do contents <- readFile fileName
-     let numbers = map (\x -> read x :: Integer) (lines contents)
+     let numbers = fmap (\x -> read x :: Int) $ lines contents
      return numbers
