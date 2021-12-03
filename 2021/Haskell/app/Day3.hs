@@ -5,20 +5,44 @@ import Data.List
 import Data.Ord (comparing)
 
 
-solve :: FilePath -> IO Int
+solve :: FilePath -> IO (Int, Int)
 solve fileName =
   do contents <- readFile fileName
      let strs = lines contents
-     return (power strs)
+     return (power strs, lifeSupport strs)
 
+
+-- Calculates the life support rating (part 2).
 lifeSupport :: [String] -> Int
 lifeSupport xs = (oxygen xs) * (co2 xs)
 
-oxygen :: [String] -> Int
-oxygen xs = undefined
 
+-- Calculates the Oxygen rate (part 2)
+oxygen :: [String] -> Int
+oxygen xs = convert $ findWinner mostCommon xs
+
+
+-- Calculates the CO2 scrubber rate (part 2)
 co2 :: [String] -> Int
-co2 xs = undefined
+co2 xs = convert $ findWinner leastCommon xs
+
+
+-- Consecutively filters a list of binary Strings by
+-- bit index criteria until there is only one binary
+-- String left.
+findWinner :: (String -> Char) -> [String] -> String
+findWinner f xs = head $ winner 0 xs
+  where winner bit xs' | length xs' == 1 = xs'
+                       | otherwise       = winner (bit+1) $ meetsCriteria bit f xs'
+
+
+-- Given an index, a criteria and a list of binary Strings, it returns
+-- a list that only contains the binary Strings that meet the criteria
+-- for that bit index.
+meetsCriteria :: Int -> (String -> Char) -> [String] -> [String]
+meetsCriteria n crit xs =
+  let bit = crit $ colToBinStr n xs
+  in filter (\ys -> ys !! n /= bit) xs
 
 
 -- Calculates the power consumption (part 1)
