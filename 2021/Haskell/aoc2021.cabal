@@ -25,16 +25,13 @@ executable aoc2021
     main-is:          Main.hs
 
     -- Modules included in this executable, other than Main.
-    other-modules:
-        Day1
-      , Day2
-      , Day3
-      , Day4
+    other-modules: Day5
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
     build-depends:
         base ^>=4.14.3.0
+      , containers
       , split >=0.2.3.4
     hs-source-dirs:   app
     default-language: Haskell2010
