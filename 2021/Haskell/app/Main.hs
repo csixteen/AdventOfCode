@@ -3,6 +3,7 @@ module Main where
 import Day1
 import Day2
 import Day3
+import Day4
 
 main :: IO ()
 main =
@@ -17,3 +18,5 @@ main =
      (x, y) <- Day3.solve "data/day3_input.txt"
      putStrLn $ "Day3 (part 1): " ++ (show x)
      putStrLn $ "Day3 (part 2): " ++ (show y)
+     x <- Day4.solve "data/day4_input.txt"
+     putStrLn $ "Day4 (part 1): " ++ (show x)
