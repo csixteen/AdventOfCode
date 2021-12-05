@@ -14,8 +14,6 @@ solve fileName =
          numbers    = fmap readInt $ splitOn "," (head strs)
          boards     = bingoFromList $ tail strs
          (n, board) = play numbers boards
-     putStrLn $ "Number: " ++ (show n)
-     putStrLn $ "Winner: " ++ (show board)
      return (n * sumBoard board)
 
 
