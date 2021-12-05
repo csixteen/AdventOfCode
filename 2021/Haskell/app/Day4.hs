@@ -2,19 +2,21 @@ module Day4 where
 
 import Data.List
 import Data.List.Split
+import Data.Maybe
 
 type Cell = (Int, Bool)
 type Board = [[Cell]]
 
 
-solve :: FilePath -> IO Int
+solve :: FilePath -> IO (Int, Int)
 solve fileName =
   do contents <- readFile fileName
-     let strs       = filter ((> 0) . length) $ lines contents
-         numbers    = fmap readInt $ splitOn "," (head strs)
-         boards     = bingoFromList $ tail strs
-         (n, board) = play numbers boards
-     return (n * sumBoard board)
+     let strs     = filter ((> 0) . length) $ lines contents
+         numbers  = fmap readInt $ splitOn "," (head strs)
+         boards   = bingoFromList $ tail strs
+         (n1, b1) = play numbers boards
+         (n2, b2) = lastBoard numbers boards
+     return (n1 * sumBoard b1, n2 * sumBoard b2)
 
 
 play :: [Int] -> [Board] -> (Int, Board)
@@ -23,6 +25,22 @@ play (n:ns) bs =
   in case existsWinner bs' of
     Nothing -> play ns bs'
     Just b  -> (n, b)
+
+
+lastBoard :: [Int] -> [Board] -> (Int, Board)
+lastBoard ns bs = (n, head winners)
+  where
+    bs' :: [([Board], [Board], Int)]
+    bs' = history ns bs
+    (_, winners, n) = fromJust $ find (\(losers, winners', n') -> null losers) bs'
+
+
+history :: [Int] -> [Board] -> [([Board], [Board], Int)]
+history ns bs = scanl part (bs, [], -1) ns
+  where
+    part :: ([Board], [Board], Int) -> Int -> ([Board], [Board], Int)
+    part (bs, _, _) n = (losers, winners, n)
+      where (winners, losers) = partition winner $ map (update n) bs
 
 
 update :: Int -> Board -> Board
@@ -34,15 +52,15 @@ update n b =
 
 existsWinner :: [Board] -> Maybe Board
 existsWinner []     = Nothing
-existsWinner (b:bs) =
-  case winner b of
-    False -> existsWinner bs
-    True  -> Just b
+existsWinner (b:bs) = case winner b of
+                        True  -> Just b
+                        False -> existsWinner bs
 
 
 winner :: Board -> Bool
 winner b = winner' b || winner' (transpose b)
-  where winner' = foldl' (||) False . fmap (all snd)
+  where winner' = any winRow
+        winRow  = all snd
 
 
 sumBoard :: Board -> Int

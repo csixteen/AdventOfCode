@@ -18,5 +18,6 @@ main =
      (x, y) <- Day3.solve "data/day3_input.txt"
      putStrLn $ "Day3 (part 1): " ++ (show x)
      putStrLn $ "Day3 (part 2): " ++ (show y)
-     x <- Day4.solve "data/day4_input.txt"
+     (x, y) <- Day4.solve "data/day4_input.txt"
      putStrLn $ "Day4 (part 1): " ++ (show x)
+     putStrLn $ "Day4 (part 2): " ++ (show y)
