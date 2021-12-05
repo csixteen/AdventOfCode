@@ -28,11 +28,10 @@ play (n:ns) bs =
 
 
 lastBoard :: [Int] -> [Board] -> (Int, Board)
-lastBoard ns bs = (n, head winners)
+lastBoard ns bs = (lastN, head winners)
   where
-    bs' :: [([Board], [Board], Int)]
     bs' = history ns bs
-    (_, winners, n) = fromJust $ find (\(losers, winners', n') -> null losers) bs'
+    (_, winners, lastN) = fromJust $ find (\(l, w, n) -> null l) bs'
 
 
 history :: [Int] -> [Board] -> [([Board], [Board], Int)]
