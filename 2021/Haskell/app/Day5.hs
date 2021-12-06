@@ -21,21 +21,25 @@ type Segment = (Point, Point)
 --     Segments and Points helpers
 
 
+-- Takes a Segment (Point A, Point B) and generates all the points
+-- between A and B, inclusive.
 generatePoints :: Segment -> [Point]
-generatePoints (a@(x1,y1), b@(x2,y2)) = genPoints a
+generatePoints s@(a, b) = genPoints a
   where
-    (h, v) = (x2-x1, y2-y1)
     genPoints p@(x,y) | same p b = [b]
-                      | otherwise  = (x,y) : genPoints (nextPoint p h v)
+                      | otherwise  = (x,y) : genPoints (nextPoint p s)
 
 
-nextPoint :: Point -> Int -> Int -> Point
-nextPoint (x,y) h v = (x+dx, y+dy)
+-- Takes a point and a segment and returns the next point in that
+-- segment.
+nextPoint :: Point -> Segment -> Point
+nextPoint (x,y) ((x1,y1),(x2,y2)) = (x+dx, y+dy)
   where
     increment n = if n < 0 then -1 else if n > 0 then 1 else 0
-    (dx, dy) = (increment h, increment v)
+    (dx, dy) = (increment (x2-x1), increment (y2-y1))
 
 
+-- Indicates whether two points are the same.
 same :: Point -> Point -> Bool
 same (x1,y1) (x2,y2) = x1 == x2 && y1 == y2
 
