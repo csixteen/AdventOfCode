@@ -26,8 +26,8 @@ type Segment = (Point, Point)
 generatePoints :: Segment -> [Point]
 generatePoints s@(a, b) = genPoints a
   where
-    genPoints p@(x,y) | same p b = [b]
-                      | otherwise  = (x,y) : genPoints (nextPoint p s)
+    genPoints p | same p b = [b]
+                | otherwise  = p : genPoints (nextPoint p s)
 
 
 -- Takes a point and a segment and returns the next point in that
