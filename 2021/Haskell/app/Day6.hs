@@ -15,9 +15,12 @@ solve fileName =
      return (part1, part2)
 
 
+-- The State is a mapping between days until end of cycle and the
+-- number of lanternfish in such state.
 type State = S.Map Int Int
 
 
+-- Takes a list of integers and builds the initial state.
 state :: [Int] -> State
 state xs = foldl' f s0 xs
   where
@@ -26,12 +29,21 @@ state xs = foldl' f s0 xs
     f m i = S.insertWith (+) i 1 m
 
 
+-- This function takes a State and returns a new State
+-- with the mappings updated.
 update :: State -> State
 update s =
   let
+    -- S.elems returns all the values sorted according to the
+    -- ascending order of the keys.
     (x : xs) = S.elems s
+    -- Builds a new State where the key 8 is set to 0. All other
+    -- keys are deducted from a shift in the values.
     s' = S.fromList $ zip [0..8] xs
+    -- Updates the key 8 with the previous value of the key 0
     s'' = S.insert 8 x s'
+  -- Updates the key 6 by adding the number of lanterfish that
+  -- had 0 days remaining to the end of the cycle.
   in S.adjust (+ x) 6 s''
 
 
