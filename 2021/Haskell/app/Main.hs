@@ -1,8 +1,9 @@
 module Main where
 
-import Day5
+import Day6
+
 
 main :: IO ()
 main =
-  do x <- Day5.solve "data/day5_input.txt"
-     putStrLn $ "Day5 (part 2): " ++ (show x)
+  do x <- Day6.solve "data/day6_input.txt"
+     putStrLn $ "Day6 (part 1): " ++ (show x)
