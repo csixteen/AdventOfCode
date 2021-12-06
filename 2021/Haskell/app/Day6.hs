@@ -1,31 +1,38 @@
 module Day6 where
 
+import Data.List
 import Data.List.Split
+import qualified Data.Map.Strict as S
 
 
-solve :: FilePath -> IO Int
+solve :: FilePath -> IO (Int, Int)
 solve fileName =
   do contents <- readFile fileName
-     let initState = map readInt $ splitOn "," contents
-     return (length $ simulate 256 initState)
+     let lst   = map readInt $ splitOn "," contents
+         s     = state lst
+         part1 = sum $ S.elems $ (iterate update s) !! 80
+         part2 = sum $ S.elems $ (iterate update s) !! 256
+     return (part1, part2)
 
 
-simulate :: Int -> [Int] -> [Int]
-simulate n xs = sim 0 xs
-  where sim i acc | i == n    = acc
-                  | otherwise = sim (i+1) (update acc)
+type State = S.Map Int Int
 
 
-update :: [Int] -> [Int]
-update lst = update' lst [] []
+state :: [Int] -> State
+state xs = foldl' f s0 xs
   where
-    update' :: [Int] -> [Int] -> [Int] -> [Int]
-    update' [] ys ws     = (reverse ys) ++ (reverse ws)
-    update' (x:xs) ys ws =
-      let gen_new = x == 0
-          new_ws = if gen_new then (8 : ws) else ws
-          new_x   = if x == 0 then 6 else x-1
-      in update' xs (new_x : ys) new_ws
+    s0 = S.fromList $ zip [0..8] (replicate 9 0)
+    f :: State -> Int -> State
+    f m i = S.insertWith (+) i 1 m
+
+
+update :: State -> State
+update s =
+  let
+    (x : xs) = S.elems s
+    s' = S.fromList $ zip [0..8] xs
+    s'' = S.insert 8 x s'
+  in S.adjust (+ x) 6 s''
 
 
 readInt :: String -> Int
