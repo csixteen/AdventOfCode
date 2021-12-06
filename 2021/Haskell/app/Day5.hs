@@ -60,6 +60,7 @@ buildDiagram xs =
   in addPoints points M.empty
   where
     buildSegment [[x1,y1],[x2,y2]] = ((readInt x1, readInt y1), (readInt x2, readInt y2))
+    readInt s = read s :: Int
 
 
 addPoints :: [Point] -> M.Map Point Int -> M.Map Point Int
@@ -67,7 +68,3 @@ addPoints ps d = foldl' addPoint d ps
   where
     addPoint :: M.Map Point Int -> Point -> M.Map Point Int
     addPoint m p = S.insertWith (+) p 1 m
-
-
-readInt :: String -> Int
-readInt s = read s :: Int
