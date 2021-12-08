@@ -24,7 +24,7 @@ type State = S.Map Int Int
 state :: [Int] -> State
 state xs = foldl' f s0 xs
   where
-    s0 = S.fromList $ zip [0..8] (replicate 9 0)
+    s0 = S.fromList $ zip [0..8] (repeat 0)
     f :: State -> Int -> State
     f m i = S.insertWith (+) i 1 m
 
