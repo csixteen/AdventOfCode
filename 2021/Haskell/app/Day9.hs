@@ -11,8 +11,8 @@ solve fileName =
      let
        hm      = heatmap $ lines contents
        part1   = sum $ map ((+1) . (point hm)) $ lowPoints hm
-       [a,b,c] = take 3 $ sortBy (\a b -> compare b a) $ map length $ basins hm
-     return (part1,a*b*c)
+       part2 = product $ take 3 $ sortBy (\a b -> compare b a) $ map length $ basins hm
+     return (part1,part2)
 
 
 type Heatmap = [[Int]]
