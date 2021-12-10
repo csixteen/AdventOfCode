@@ -11,7 +11,7 @@ solve fileName =
      let
        hm    = heatmap $ lines contents
        part1 = sum $ map ((+1) . (point hm)) $ lowPoints hm
-       part2 = product $ take 3 $ sortBy (\a b -> compare b a) $ map length $ basins hm
+       part2 = product $ take 3 $ sortBy (flip compare) $ map length $ basins hm
      return (part1,part2)
 
 
