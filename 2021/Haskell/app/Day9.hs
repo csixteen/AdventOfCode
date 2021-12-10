@@ -70,7 +70,3 @@ neighbors p hm = filter (\(x,y) -> (between x 0 mRows) && (between y 0 mCols)) c
     increments           = [(0, 1), (0, -1), (1, 0), (-1, 0)]
     (mRows, mCols)       = ((length hm)-1, (length $ head hm)-1)
     sumPairs (a,b) (c,d) = (a+c, b+d)
-
-
-readInt :: String -> Int
-readInt s = read s
