@@ -53,9 +53,7 @@ point hm (row,col) = (hm !! row) !! col
 
 
 isLowPoint :: Heatmap -> (Int,Int) -> Bool
-isLowPoint hm p = all (\n -> (point hm p) < (point hm n)) neighbs
-  where
-    neighbs = neighbors p hm
+isLowPoint hm p = all (\n -> (point hm p) < (point hm n)) $ neighbors p hm
 
 
 heatmap :: [String] -> Heatmap
