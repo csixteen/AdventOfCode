@@ -6,8 +6,6 @@ import Data.List.Split
 import qualified Data.Map.Strict as S
 import Data.Maybe
 
-import Debug.Trace
-
 
 solve :: FilePath -> IO (Int, Int)
 solve fileName =
