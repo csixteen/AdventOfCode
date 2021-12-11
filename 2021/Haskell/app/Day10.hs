@@ -22,8 +22,8 @@ findMatch c =
     Nothing -> fst $ head $ filter ((==c) . snd) matches
 
 
-points :: Char -> Int
-points c = fromJust $ lookup c pts
+points :: Char -> Maybe Int
+points c = lookup c pts
   where
     pts = [(')', 3), (']', 57), ('}', 1197), ('>', 25137)]
 
@@ -32,7 +32,7 @@ validate :: String -> (Maybe Int, String)
 validate chunks =
   case validate' chunks [] of
     Nothing -> (Nothing, chunks)
-    Just c  -> (Just (points c), chunks)
+    Just c  -> (points c, chunks)
 
 
 validate' :: String -> [Char] -> Maybe Char
