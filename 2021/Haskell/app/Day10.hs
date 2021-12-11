@@ -12,11 +12,7 @@ solve fileName =
 
 
 matches :: [(Char,Char)]
-matches = [
-  ('(', ')'),
-  ('[', ']'),
-  ('{', '}'),
-  ('<', '>')]
+matches = [('(', ')'), ('[', ']'), ('{', '}'), ('<', '>')]
 
 
 findMatch :: Char -> Char
@@ -51,8 +47,6 @@ validate' (x:xs) s =
                 else Just x
     
 
--- Given a char, returns a Maybe Char with the matching
--- opening bracket.
 isOpening :: Char -> Bool
 isOpening c = isJust $ lookup c matches
 
