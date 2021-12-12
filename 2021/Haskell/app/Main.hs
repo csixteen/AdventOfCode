@@ -1,10 +1,10 @@
 module Main where
 
-import Day10
+import Day11
 
 
 main :: IO ()
 main =
-  do (x, y) <- Day10.solve "data/day10_input.txt"
-     putStrLn $ "Day10 (part 1): " ++ (show x)
-     putStrLn $ "Day10 (part 2): " ++ (show y)
+  do (x, y) <- Day11.solve "data/day11_input.txt"
+     putStrLn $ "Day11 (part 1): " ++ (show x)
+     putStrLn $ "Day11 (part 2): " ++ (show y)
