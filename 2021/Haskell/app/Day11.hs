@@ -97,4 +97,4 @@ neighbors' :: Point -> [Point]
 neighbors' p = zipWith sumPairs increments (repeat p)
   where
     sumPairs (a,b) (c,d) = (a+c, b+d)
-    increments = filter (/= (0,0)) [(x,y) | x <- [-1..1], y <- [-1..1]]
+    increments = [(x,y) | x <- [-1..1], y <- [-1..1], (x,y) /= (0,0)]
