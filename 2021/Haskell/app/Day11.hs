@@ -55,18 +55,16 @@ increment :: Matrix -> S.Set Point -> (S.Set Point, Matrix)
 increment m acc =
   case filter (\p -> not $ S.member p acc) $ flashing m of
     [] -> (acc, foldl' (\a pt -> zero a pt) m $ points m)
-    xs ->
-      let
+    xs -> increment m' acc'
+      where
         v    = foldl' (\a pt -> foldr (:) a $ neighbors pt m) [] xs
         m'   = foldl' (\a pt -> update a (+1) pt) m v
         acc' = foldl' (\a pt -> S.insert pt a) acc xs
-      in
-        increment m' acc'
 
 
 zero :: Matrix -> Point -> Matrix
-zero m p = if (val m p) > 9 then update m (\_ -> 0) p
-           else m
+zero m p | (val m p) > 9 = update m (\_ -> 0) p
+         | otherwise     = m
 
 
 flashing :: Matrix -> [Point]
