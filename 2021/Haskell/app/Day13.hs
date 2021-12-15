@@ -17,7 +17,7 @@ solve fileName =
        g = grid mRows mCols dots'
        oneFold = origami g $ take 1 inst'
        part1 = countDots oneFold
-       part2 = origami g inst'
+       part2 = reverse $ map reverse $ origami g inst'
      putStrLn $ intercalate "\n" part2
      return (part1,1)
 
