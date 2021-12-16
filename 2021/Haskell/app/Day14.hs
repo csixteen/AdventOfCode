@@ -11,7 +11,7 @@ solve fileName =
      let
        [template, rs] = splitWhen null $ lines contents
        rs'            = rules rs
-       (part1,_)      = (iterate polymerization (template !! 0, rs')) !! 40
+       (part1,_)      = (iterate polymerization (template !! 0, rs')) !! 10
      putStrLn $ show $ calculate part1
      return (1,1)
 
