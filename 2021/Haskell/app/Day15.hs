@@ -34,11 +34,11 @@ start xs = scanl (+) 0 $ tail xs
 
 
 update :: [Int] -> [Int] -> [Int]
-update prev rs = reverse $ foldl' foobar [x] [1..l]
+update prev rs = reverse $ foldl' update' [x] [1..l]
   where
     x = (rs !! 0) + (prev !! 0)
     l = (length rs) - 1
-    foobar acc i =
+    update' acc i =
       let
         p1 = acc !! 0
         p2 = prev !! i
