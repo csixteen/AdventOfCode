@@ -14,15 +14,12 @@ solve fileName =
 
 
 navigate :: [[Int]] -> Int
-navigate rs = last rs'
-  where rs' = navigate' (start $ head rs) (tail rs)
+navigate rs = last $ navigate' (start $ head rs) (tail rs)
 
 
 navigate' :: [Int] -> [[Int]] -> [Int]
-navigate' prev (r:rs) = navigate' prev' rs
-  where
-    prev' = update prev r
-navigate' prev [] = prev
+navigate' prev (r:rs) = navigate' (update prev r) rs
+navigate' prev []     = prev
 
 
 risks :: [String] -> [[Int]]
