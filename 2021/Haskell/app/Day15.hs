@@ -8,9 +8,10 @@ solve :: FilePath -> IO (Int,Int)
 solve fileName =
   do contents <- readFile fileName
      let
-       rs = risks $ lines contents
+       rs    = risks $ lines contents
        part1 = navigate rs
-     return (part1,1)
+       part2 = navigate $ extend rs
+     return (part1,part2)
 
 
 navigate :: [[Int]] -> Int
@@ -19,6 +20,20 @@ navigate rs = last $ navigate' (start $ head rs) (tail rs)
 
 navigate' :: [Int] -> [[Int]] -> [Int]
 navigate' prev rs = foldl' (\acc r -> update acc r) prev rs
+
+
+extend :: [[Int]] -> [[Int]]
+extend rs =
+  concat $
+  fmap (\(i,rs') -> fmap (extendRow i) rs') $
+  zip [0..4] (repeat rs)
+
+
+extendRow :: Int -> [Int] -> [Int]
+extendRow j row =
+  concat $
+  fmap (\(i,xs) -> map (\c -> 1+((c+i-1) `mod` 9)) xs) $
+  zip [(0+j)..(4+j)] (repeat row)
 
 
 risks :: [String] -> [[Int]]
