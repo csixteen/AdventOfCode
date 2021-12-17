@@ -18,8 +18,7 @@ navigate rs = last $ navigate' (start $ head rs) (tail rs)
 
 
 navigate' :: [Int] -> [[Int]] -> [Int]
-navigate' prev (r:rs) = navigate' (update prev r) rs
-navigate' prev []     = prev
+navigate' prev rs = foldl' (\acc r -> update acc r) prev rs
 
 
 risks :: [String] -> [[Int]]
