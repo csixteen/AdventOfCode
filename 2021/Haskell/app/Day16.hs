@@ -101,7 +101,7 @@ intOpOp _ = error "Invalid operator"
 -- References:
 -- - https://hackage.haskell.org/package/parsec-3.1.15.0
 -- - Real-world Haskell (Chapter 16)
--- - https://github.com/sonowz/advent-of-code-haskell/blob/master/src/Y2021/Day16.hs
+-- - https://github.com/sonowz/advent-of-code-haskell/
 -- ---------------------------------
 
 
