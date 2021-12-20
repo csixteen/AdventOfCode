@@ -41,7 +41,7 @@ risks = fmap (fmap digitToInt)
 
 
 start :: [Int] -> [Int]
-start xs = scanl (+) 0 $ tail xs
+start = scanl (+) 0 . tail
 
 
 update :: [Int] -> [Int] -> [Int]
