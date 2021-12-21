@@ -1,5 +1,3 @@
-{-# LANGUAGE DerivingVia #-}
-
 module Day16 where
 
 import Control.Monad
@@ -29,14 +27,13 @@ solve =
 -- ------------------------
 
 
-newtype Version  = Version Int deriving (Show)
+newtype Version  = Version Int
 
 data Binary = Zero | One deriving (Eq,Ord,Show)
 type BinStream = [Binary]
-newtype BinNumber = BN BinStream deriving (Monoid,Semigroup) via BinStream
+newtype BinNumber = BN BinStream
 
-data Op = OpSum | OpProd | OpMin | OpMax | OpGT | OpLT | OpEQ deriving (Show)
-
+data Op = OpSum | OpProd | OpMin | OpMax | OpGT | OpLT | OpEQ
 data Packet = Literal Version BinNumber
             | Operator Version Op [Packet]
 
@@ -54,8 +51,8 @@ binToInt n = bti (un n) 0
     bti []          acc = acc
     bti [Zero]      acc = acc
     bti [One]       acc = 1 + acc
-    bti (Zero : bs) acc = bti bs (2*acc)
-    bti (One : bs)  acc = bti bs (2*(acc+1))
+    bti (Zero : bs) acc = bti bs (2 * acc)
+    bti (One : bs)  acc = bti bs (2 * (acc + 1))
 
 
 intToBin :: Integral a => a -> BinNumber
@@ -106,14 +103,14 @@ intOpOp _ = error "Invalid operator"
 
 
 parsePacket :: BinStream -> Packet
-parsePacket ps = fromRight (error "Parsing error") $ parse pAlignedPacket "" ps
+parsePacket = (fromRight (error "Parsing error")) . parse pAlignedPacket ""
 
 
 -- 4-bit alignment
 pAlignedPacket :: Parsec BinStream () Packet
 pAlignedPacket =
   do packet <- pUnalignedPacket
-     column <- sourceColumn <$> getPosition :: Parsec BinStream () Int
+     column <- sourceColumn <$> getPosition
      let padding = (column - 1) `mod` 4
      replicateM_ padding pZero
      return packet
@@ -123,23 +120,25 @@ pAlignedPacket =
 pUnalignedPacket :: Parsec BinStream () Packet
 pUnalignedPacket =
   do version <- Version . binToInt <$> pBinNumber 3
-     pType   <- binToInt <$> pBinNumber 3 :: Parsec BinStream () Int
-     if pType == 4 then pLiteralPacket version
-     else pOperatorPacket version pType
+     pType   <- binToInt <$> pBinNumber 3
+     if pType == 4 then pLiteral version
+     else pOperator version pType
 
 
-pLiteralPacket :: Version -> Parsec BinStream () Packet
-pLiteralPacket v = Literal v . BN <$> pValue
+pLiteral :: Version -> Parsec BinStream () Packet
+pLiteral v = Literal v . BN <$> pValue
   where
     pValue :: Parsec BinStream () BinStream
     pValue = pBinStream 5 >>= (\xs -> case xs of
+                                  -- If first bit is '0', then we're on the last group,
+                                  -- or else we have more groups to go.
                                   Zero : value -> return value
                                   One : value  -> (<>) value <$> pValue
                                   []           -> error "Impossible")
 
 
-pOperatorPacket :: Version -> Int -> Parsec BinStream () Packet
-pOperatorPacket v t =
+pOperator :: Version -> Int -> Parsec BinStream () Packet
+pOperator v t =
   do
     subpackets <- try pTotalLength <|> try pNumberSubpackets
     return (Operator v (intToOp t) subpackets)
@@ -155,7 +154,7 @@ pOperatorPacket v t =
         len   <- binToInt <$> pBinNumber 15
         start <- getColumn
         whileM ((\end -> end < start + len) <$> getColumn) pUnalignedPacket
-    getColumn = sourceColumn <$> getPosition :: Parsec BinStream () Int
+    getColumn = sourceColumn <$> getPosition
     whileM :: Monad m => m Bool -> m a -> m [a]
     whileM pred action =
       -- This could be written like this:
@@ -199,7 +198,7 @@ incPos p _ _ = incSourceColumn p 1
 
 
 sumVersions :: Packet -> Int
-sumVersions (Literal (Version v) _)     = v
+sumVersions (Literal  (Version v) _   ) = v
 sumVersions (Operator (Version v) _ ps) = v + sum (sumVersions <$> ps)
 
 
@@ -209,11 +208,11 @@ calculate (Operator _ op subpackets) = eval op (calculate <$> subpackets)
 
 
 eval :: Op -> [Int] -> Int
-eval OpSum   xs = sum xs
-eval OpProd  xs = product xs
-eval OpMin xs   = minimum xs
-eval OpMax xs   = maximum xs
-eval OpGT [a,b] = if a > b then 1 else 0
-eval OpLT [a,b] = if a < b then 1 else 0
-eval OpEQ [a,b] = if a == b then 1 else 0
-eval _ _        = error "Undefined behavior"
+eval OpSum  xs    = sum xs
+eval OpProd xs    = product xs
+eval OpMin  xs    = minimum xs
+eval OpMax  xs    = maximum xs
+eval OpGT   [a,b] = if a > b then 1 else 0
+eval OpLT   [a,b] = if a < b then 1 else 0
+eval OpEQ   [a,b] = if a == b then 1 else 0
+eval _ _          = error "Undefined behavior"
