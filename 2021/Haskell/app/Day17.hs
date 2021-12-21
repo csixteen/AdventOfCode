@@ -37,13 +37,9 @@ newtype Velocity = Velocity (Int,Int)
 
 
 highestY :: TargetArea -> Int
-highestY ta = case find (canReachArea ta) velocities of
+highestY ta = case find (canReachArea ta) (velocities ta) of
   Just (Velocity(_,y)) -> sum [1..y]
   Nothing              -> error "Impossible!"
-  where
-    velocities = [Velocity (x,y) | x <- [1..maxX], y <- reverse [(-maxY)..maxY]]
-    maxY       = abs minY
-    TargetArea _ maxX minY _ = ta
 
 
 canReachArea :: TargetArea -> Velocity -> Bool
@@ -72,11 +68,13 @@ inArea (Pos (x,y)) (TargetArea x1 x2 y1 y2) =
 
 
 countVelocities :: TargetArea -> Int
-countVelocities ta = length $ filter (canReachArea ta) velocities
-  where
-    velocities = [Velocity (x,y) | x <- [1..maxX], y <- [(-maxY)..maxY]]
-    maxY       = abs minY
-    TargetArea _ maxX minY _ = ta
+countVelocities ta = length $ filter (canReachArea ta) (velocities ta)
+
+
+velocities :: TargetArea -> [Velocity]
+velocities (TargetArea _ maxX minY _) =
+  [Velocity (x,y) | x <- [1..maxX], y <- reverse [(-maxY)..maxY]]
+  where maxY = abs minY
 
 
 -- --------------------
