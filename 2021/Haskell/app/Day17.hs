@@ -1,6 +1,8 @@
 module Day17 where
 
 import Data.Either
+import Data.List
+import Data.Maybe
 import qualified Data.Text as T (Text,lines,unlines)
 import Relude.File (readFileText)
 import Relude.String.Conversion hiding (show)
@@ -43,7 +45,19 @@ inArea (Pos (x,y)) (TargetArea x1 x2 y1 y2) =
 
 
 highestY :: TargetArea -> Int
-highestY = undefined
+highestY ta = case find (canReachArea ta) velocities of
+  Just (Velocity(_,y)) -> sum [1..y]
+  Nothing              -> error "Impossible!"
+  where
+    velocities = [Velocity (x,y) | x <- [1..maxX], y <- reverse [(-maxY)..maxY]]
+    maxY       = abs minY
+    TargetArea _ maxX minY _ = ta
+
+
+canReachArea :: TargetArea -> Velocity -> Bool
+canReachArea ta@(TargetArea minX maxX minY maxY) v = inArea (last ps) ta
+  where
+    ps = takeWhile (\(Pos (x,y)) -> x <= maxX && y >= minY) $ fireProbe v (Pos (0,0))
 
 
 -- Given an initial velocity and initial position, it generates an
