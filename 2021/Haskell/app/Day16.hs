@@ -79,8 +79,9 @@ hexToBin = toString >=> (un . parseHex)
     parseHex 'E' = un $ intToBin 14
     parseHex 'F' = un $ intToBin 15
     parseHex x   = (padding . un . intToBin . readInt . toText) [x]
-      where padding xs = replicate (4 - length xs) Zero <> xs
-            readInt = read . toString
+      where
+        padding xs = replicate (4 - length xs) Zero <> xs
+        readInt = read . toString
 
 
 intToOp :: Int -> Op
