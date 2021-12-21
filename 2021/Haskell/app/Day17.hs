@@ -17,7 +17,8 @@ solve =
   do targetArea <- parseTargetArea <$> T.lines <$> readFileText  "data/day17_input.txt" :: IO TargetArea
      let
        part1 = highestY targetArea
-     return (part1,1)
+       part2 = countVelocities targetArea
+     return (part1,part2)
 
 
 -- ---------------------------
@@ -68,6 +69,14 @@ move (Pos (x,y)) (Velocity (a,b)) = Pos (x+a, y+b)
 inArea :: Pos -> TargetArea -> Bool
 inArea (Pos (x,y)) (TargetArea x1 x2 y1 y2) =
   x >= x1 && x <= x2 && y >= y1 && y <= y2
+
+
+countVelocities :: TargetArea -> Int
+countVelocities ta = length $ filter (canReachArea ta) velocities
+  where
+    velocities = [Velocity (x,y) | x <- [1..maxX], y <- [(-maxY)..maxY]]
+    maxY       = abs minY
+    TargetArea _ maxX minY _ = ta
 
 
 -- --------------------
