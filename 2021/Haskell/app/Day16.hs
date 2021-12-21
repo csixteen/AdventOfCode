@@ -32,11 +32,11 @@ solve =
 newtype Version  = Version Int
 
 data Binary = Zero | One deriving (Eq,Ord,Show)
-type BinStream = [Binary]
-newtype BinNumber = BN BinStream
+type BStream = [Binary]
+newtype BNumber = BN BStream
 
 data Op = OpSum | OpProd | OpMin | OpMax | OpGT | OpLT | OpEQ
-data Packet = Literal Version BinNumber
+data Packet = Literal Version BNumber
             | Operator Version Op [Packet]
 
 type HexNum = T.Text
@@ -47,7 +47,7 @@ type HexNum = T.Text
 -- -------------------------
 
 
-binToInt :: Num a => BinNumber -> a
+binToInt :: Num a => BNumber -> a
 binToInt n = bti (un n) 0
   where
     bti []          acc = acc
@@ -57,7 +57,7 @@ binToInt n = bti (un n) 0
     bti (One : bs)  acc = bti bs (2 * (acc + 1))
 
 
-intToBin :: Integral a => a -> BinNumber
+intToBin :: Integral a => a -> BNumber
 intToBin n = BN (itb n [])
   where
     itb 0 acc = Zero : acc
@@ -68,10 +68,10 @@ intToBin n = BN (itb n [])
       _     -> error "Can't happen."
 
 
-hexToBin :: HexNum -> BinStream
+hexToBin :: HexNum -> BStream
 hexToBin = toString >=> (un . parseHex)
   where
-    parseHex :: Char -> BinStream
+    parseHex :: Char -> BStream
     parseHex 'A' = un $ intToBin 10
     parseHex 'B' = un $ intToBin 11
     parseHex 'C' = un $ intToBin 12
@@ -104,42 +104,40 @@ intOpOp _ = error "Invalid operator"
 -- ---------------------------------
 
 
-parsePacket :: BinStream -> Packet
-parsePacket = (fromRight (error "Parsing error")) . parse pAlignedPacket ""
+parsePacket :: BStream -> Packet
+parsePacket = (fromRight (error "Parsing error")) . parse pPacket ""
 
 
--- 4-bit alignment
-pAlignedPacket :: Parsec BinStream () Packet
-pAlignedPacket =
-  do packet <- pUnalignedPacket
+pPacket :: Parsec BStream () Packet
+pPacket =
+  do packet <- pPacket'
      column <- sourceColumn <$> getPosition
      let padding = (column - 1) `mod` 4
      replicateM_ padding pZero
      return packet
 
 
--- Unaligned packet
-pUnalignedPacket :: Parsec BinStream () Packet
-pUnalignedPacket =
-  do version <- Version . binToInt <$> pBinNumber 3
-     binToInt <$> pBinNumber 3 >>= \case
-                                     4 -> pLiteral version
-                                     _ -> pOperator version pType)
+pPacket' :: Parsec BStream () Packet
+pPacket' =
+  do version <- Version . binToInt <$> pBNumber 3
+     binToInt <$> pBNumber 3 >>= \pType -> case pType of
+                                             4 -> pLiteral version
+                                             _ -> pOperator version pType
 
 
-pLiteral :: Version -> Parsec BinStream () Packet
+pLiteral :: Version -> Parsec BStream () Packet
 pLiteral v = Literal v . BN <$> pValue
   where
-    pValue :: Parsec BinStream () BinStream
-    pValue = pBinStream 5 >>= \case
-                                -- If first bit is '0', then we're on the last group,
-                                -- or else we have more groups to go.
-                                Zero : value -> return value
-                                One : value  -> (<>) value <$> pValue
-                                []           -> error "Impossible")
+    pValue :: Parsec BStream () BStream
+    pValue = pBStream 5 >>= \case
+                              -- If first bit is '0', then we're on the last group,
+                              -- or else we have more groups to go.
+                              Zero : value -> return value
+                              One : value  -> (<>) value <$> pValue
+                              []           -> error "Impossible"
 
 
-pOperator :: Version -> Int -> Parsec BinStream () Packet
+pOperator :: Version -> Int -> Parsec BStream () Packet
 pOperator v t =
   do
     subpackets <- try pTotalLength <|> try pNumberSubpackets
@@ -148,14 +146,14 @@ pOperator v t =
     pNumberSubpackets =
       do
         pOne
-        count <- binToInt <$> pBinNumber 11
-        replicateM count pUnalignedPacket
+        count <- binToInt <$> pBNumber 11
+        replicateM count pPacket'
     pTotalLength =
       do
         pZero
-        len   <- binToInt <$> pBinNumber 15
+        len   <- binToInt <$> pBNumber 15
         start <- getColumn
-        whileM ((\end -> end < start + len) <$> getColumn) pUnalignedPacket
+        whileM ((\end -> end < start + len) <$> getColumn) pPacket'
     getColumn = sourceColumn <$> getPosition
     whileM :: Monad m => m Bool -> m a -> m [a]
     whileM pred action =
@@ -164,30 +162,30 @@ pOperator v t =
                  False -> return []
 
 
-pZero :: Parsec BinStream () Binary
+pZero :: Parsec BStream () Binary
 pZero = tokenPrim show incPos (guarded (== Zero))
 
 
-pOne :: Parsec BinStream () Binary
+pOne :: Parsec BStream () Binary
 pOne = tokenPrim show incPos (guarded (== One))
 
 
-pBinary :: Parsec BinStream () Binary
+pBinary :: Parsec BStream () Binary
 pBinary = tokenPrim show incPos Just
 
 
-pBinNumber :: Int -> Parsec BinStream () BinNumber
-pBinNumber = (BN <$>) . pBinStream
+pBNumber :: Int -> Parsec BStream () BNumber
+pBNumber = (BN <$>) . pBStream
 
 
-pBinStream :: Int -> Parsec BinStream () BinStream
-pBinStream n =
+pBStream :: Int -> Parsec BStream () BStream
+pBStream n =
   do bs <- count n pBinary
      guard (length bs == n)
      return bs
 
 
-incPos :: SourcePos -> Binary -> BinStream -> SourcePos
+incPos :: SourcePos -> Binary -> BStream -> SourcePos
 incPos p _ _ = incSourceColumn p 1
 
 
