@@ -30,15 +30,6 @@ newtype Pos = Pos (Int,Int)
 newtype Velocity = Velocity (Int,Int)
 
 
-move :: Pos -> Velocity -> Pos
-move (Pos (x,y)) (Velocity (a,b)) = Pos (x+a, y+b)
-
-
-inArea :: Pos -> TargetArea -> Bool
-inArea (Pos (x,y)) (TargetArea x1 x2 y1 y2) =
-  x >= x1 && x <= x2 && y >= y1 && y <= y2
-
-
 -- ------------------
 --      Solvers
 -- ------------------
@@ -68,6 +59,15 @@ fireProbe v@(Velocity (dx,dy)) p@(Pos (x,y)) = p : fireProbe newVel newPos
   where
     newPos = move p v
     newVel = Velocity (max (dx-1) 0, dy-1)
+
+
+move :: Pos -> Velocity -> Pos
+move (Pos (x,y)) (Velocity (a,b)) = Pos (x+a, y+b)
+
+
+inArea :: Pos -> TargetArea -> Bool
+inArea (Pos (x,y)) (TargetArea x1 x2 y1 y2) =
+  x >= x1 && x <= x2 && y >= y1 && y <= y2
 
 
 -- --------------------
