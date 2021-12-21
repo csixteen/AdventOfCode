@@ -1,3 +1,5 @@
+{-# LANGUAGE LambdaCase #-}
+
 module Day16 where
 
 import Control.Monad
@@ -67,16 +69,16 @@ intToBin n = BN (itb n [])
 
 
 hexToBin :: HexNum -> BinStream
-hexToBin = toString >=> (un . parseBin)
+hexToBin = toString >=> (un . parseHex)
   where
-    parseBin :: Char -> BinStream
-    parseBin 'A' = un $ intToBin 10
-    parseBin 'B' = un $ intToBin 11
-    parseBin 'C' = un $ intToBin 12
-    parseBin 'D' = un $ intToBin 13
-    parseBin 'E' = un $ intToBin 14
-    parseBin 'F' = un $ intToBin 15
-    parseBin x   = padding . un . intToBin . readInt . toText $ ([x] :: String)
+    parseHex :: Char -> BinStream
+    parseHex 'A' = un $ intToBin 10
+    parseHex 'B' = un $ intToBin 11
+    parseHex 'C' = un $ intToBin 12
+    parseHex 'D' = un $ intToBin 13
+    parseHex 'E' = un $ intToBin 14
+    parseHex 'F' = un $ intToBin 15
+    parseHex x   = (padding . un . intToBin . readInt . toText) [x]
       where padding xs = replicate (4 - length xs) Zero <> xs
             readInt = read . toString
 
@@ -120,21 +122,21 @@ pAlignedPacket =
 pUnalignedPacket :: Parsec BinStream () Packet
 pUnalignedPacket =
   do version <- Version . binToInt <$> pBinNumber 3
-     pType   <- binToInt <$> pBinNumber 3
-     if pType == 4 then pLiteral version
-     else pOperator version pType
+     binToInt <$> pBinNumber 3 >>= \case
+                                     4 -> pLiteral version
+                                     _ -> pOperator version pType)
 
 
 pLiteral :: Version -> Parsec BinStream () Packet
 pLiteral v = Literal v . BN <$> pValue
   where
     pValue :: Parsec BinStream () BinStream
-    pValue = pBinStream 5 >>= (\xs -> case xs of
-                                  -- If first bit is '0', then we're on the last group,
-                                  -- or else we have more groups to go.
-                                  Zero : value -> return value
-                                  One : value  -> (<>) value <$> pValue
-                                  []           -> error "Impossible")
+    pValue = pBinStream 5 >>= \case
+                                -- If first bit is '0', then we're on the last group,
+                                -- or else we have more groups to go.
+                                Zero : value -> return value
+                                One : value  -> (<>) value <$> pValue
+                                []           -> error "Impossible")
 
 
 pOperator :: Version -> Int -> Parsec BinStream () Packet
@@ -157,12 +159,9 @@ pOperator v t =
     getColumn = sourceColumn <$> getPosition
     whileM :: Monad m => m Bool -> m a -> m [a]
     whileM pred action =
-      -- This could be written like this:
-      -- pred >>= (\b -> if b then action >>= \a -> (a :) <$> (whileM pred action) else return []
-      do p <- pred
-         if p then do a <- action
-                      (a :) <$> (whileM pred action)
-         else return []
+      pred >>= \case
+                 True  -> action >>= \a -> (a:) <$> (whileM pred action)
+                 False -> return []
 
 
 pZero :: Parsec BinStream () Binary
