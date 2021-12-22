@@ -18,7 +18,7 @@ solve :: IO (Int,Int)
 solve =
   do numbers <- parseSFNumber <<$>> lines <$> readFileText "data/day18_input.txt"
      let
-       part1 = magnitude $ foldl1' (+) numbers 
+       part1 = magnitude $ foldl1' addNumbers numbers 
      return (part1,1)
 
 
@@ -30,15 +30,6 @@ solve =
 data SFNumber = Num Int
               | Pair SFNumber SFNumber
               deriving (Eq)
-
-
-instance Num SFNumber where
-  (+)         = addNumbers
-  (-)         = undefined
-  (*)         = undefined
-  abs         = id
-  signum      = undefined
-  fromInteger = undefined
 
 
 -- --------------------
