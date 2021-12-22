@@ -111,7 +111,7 @@ parseSFNumber = fromRight (error "Parsing error") . parse pSFNumber ""
 
 
 pSFNumber :: Parser SFNumber
-pSFNumber = try pPair <|> pNum
+pSFNumber = pPair <|> pNum
 
 
 pPair :: Parser SFNumber
