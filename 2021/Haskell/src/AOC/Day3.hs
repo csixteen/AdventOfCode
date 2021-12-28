@@ -1,4 +1,4 @@
-module Day3 where
+module AOC.Day3 where
 
 import Data.Char (digitToInt)
 import Data.List

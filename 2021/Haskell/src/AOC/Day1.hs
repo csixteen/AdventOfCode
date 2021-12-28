@@ -1,4 +1,4 @@
-module Day1 where
+module AOC.Day1 where
 
 -- Takes a file path and an integer representing the sliding window
 -- size. To solve Part 1, make n = 1.

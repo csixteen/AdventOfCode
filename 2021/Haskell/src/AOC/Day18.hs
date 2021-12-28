@@ -1,4 +1,4 @@
-module Day18 where
+module AOC.Day18 where
 
 import Prelude hiding (lines)
 

@@ -1,6 +1,4 @@
-{-# LANGUAGE LambdaCase #-}
-
-module Day16 where
+module AOC.Day16 where
 
 import Control.Monad
 import Data.Either

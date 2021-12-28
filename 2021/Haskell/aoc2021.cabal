@@ -1,5 +1,5 @@
 cabal-version:      2.4
-name:               aoc2021
+name:               aoc
 version:            0.1.0.0
 
 -- A short (one-line) description of the package.
@@ -20,38 +20,65 @@ maintainer:         csixteen@protonmail.com
 -- copyright:
 -- category:
 extra-source-files: CHANGELOG.md
+build-type: Simple
+
+common build-directives
+ build-depends: base >= 4.14.3.0
+ default-language: Haskell2010
+ ghc-options: -O2
+              -Wall
+              -threaded
+              -rtsopts "-with-rtsopts=-N"
+                    
+common common-extensions
+ default-extensions: DerivingVia
+                   , FlexibleInstances
+                   , LambdaCase
+                   , TypeSynonymInstances
+
+library
+  build-depends: base >= 4.14.3.0
+
+  exposed-modules:
+    AOC
+    AOC.Day1
+    AOC.Day2
+    AOC.Day3
+    AOC.Day4
+    AOC.Day5
+    AOC.Day6
+    AOC.Day7
+    AOC.Day8
+    AOC.Day9
+    AOC.Day10
+    AOC.Day11
+    AOC.Day12
+    AOC.Day13
+    AOC.Day14
+    AOC.Day15
+    AOC.Day16
+    AOC.Day17
+    AOC.Day18
+    AOC.Day19
+
+  hs-source-dirs:
+    src/
+
+  default-language: Haskell2010
 
 executable aoc2021
-    main-is:          Main.hs
-
-    -- Modules included in this executable, other than Main.
-    other-modules: Day18
+    import: build-directives, common-extensions
+    main-is: Main.hs
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
     build-depends:
-        base ^>=4.14.3.0
       , containers
+      , linear >= 1.21.8
+      , multiset >= 0.3.4.3
       , parsec >= 3.1.14.0
       , relude >=1.0.0.1
       , split >=0.2.3.4
       , text >=1.2.5.0
-    hs-source-dirs:   app
-    default-language: Haskell2010
-
-test-suite unit-test
-  type: exitcode-stdio-1.0
-  main-is: UnitTest.hs
-  other-modules:
-      Day1
-    , Day3
-  hs-source-dirs:
-      test
-    , app
-  ghc-options: -threaded -rtsopts -with-rtsopts=-N
-  build-depends:
-      base >=4.7 && <5
-    , Cabal
-    , tasty
-    , tasty-hunit
-  default-language: Haskell2010
+    hs-source-dirs:   src/
+    other-modules: AOC.Day19

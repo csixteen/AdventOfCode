@@ -1,4 +1,4 @@
-module Day17 where
+module AOC.Day17 where
 
 import Data.Either
 import Data.List
