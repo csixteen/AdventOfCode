@@ -67,12 +67,7 @@ pScanner = mkScanner <$> pScannerID <*> pBeacons
 
 
 pScannerID :: Parser Int
-pScannerID =
-  do
-    string "--- scanner "
-    sid <- pNumber
-    string " ---"
-    return sid
+pScannerID = between (string "--- scanner ") (string " ---") pNumber
 
 
 pBeacons :: Parser [Point]
