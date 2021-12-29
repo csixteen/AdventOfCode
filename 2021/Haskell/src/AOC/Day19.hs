@@ -70,9 +70,9 @@ pScannerID :: Parser Int
 pScannerID =
   do
     string "--- scanner "
-    sid <- many1 digit
+    sid <- pNumber
     string " ---"
-    return . readInt $ sid
+    return sid
 
 
 pBeacons :: Parser [Point]
