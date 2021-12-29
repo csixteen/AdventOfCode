@@ -31,7 +31,8 @@ common build-directives
               -rtsopts "-with-rtsopts=-N"
                     
 common common-extensions
- default-extensions: DerivingVia
+ default-extensions: BlockArguments
+                   , DerivingVia
                    , FlexibleInstances
                    , LambdaCase
                    , TypeSynonymInstances

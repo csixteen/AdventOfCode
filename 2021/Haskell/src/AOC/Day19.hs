@@ -34,14 +34,36 @@ data Scanner  = Scanner
   , transformation :: Endo Point
   , signature :: M.MultiSet Int
   }
-  deriving (Show)
 
 
-instance Show Transform where
-  show c = show $ appEndo c (V3 0 0 0)
+dist :: Point -> Point -> Int
+dist p1 p2 = x^2 + y^2 + z^2
+  where
+    V3 x y z = p1 ^-^ p2
 
 
+sign :: [Point] -> M.MultiSet Int
+sign bs = M.fromList [dist a b | a <- bs, b <- bs, a /= b]
+
+
+couldMatch :: Scanner -> Scanner -> Bool
+couldMatch s1 s2 = s >= (12 * 11) `div` 2
+  where
+    s = M.size $ M.intersection (signature s1) (signature s2)
+
+
+{-
+   * Rotations *
+
+Reference: https://hackage.haskell.org/package/base-4.16.0.0/docs/Data-Monoid.html#t:Endo
+This allows us to apply a single rotation or a composition of rotations to a Vector:
+ appEndo rX (V3 1 1 1) == V3 1 (-1) 1
+ appEndo (rX <> rZ) (V3 1 1 2) == V3 (-1) (-2) 1
+-}
 nullT = Endo id
+rX = Endo \(V3 x y z) -> V3 x (-z) y
+rY = Endo \(V3 x y z) -> V3 z y (-x)
+rZ = Endo \(V3 x y z) -> V3 (-y) x z
 
 
 -- -----------------------------
@@ -59,6 +81,7 @@ pScanners = pScanner `sepBy` many1 endOfLine
 pScanner :: Parser Scanner
 pScanner = mkScanner <$> pScannerID <*> pBeacons
   where
+    mkScanner :: Int -> [Point] -> Scanner
     mkScanner sId beacons = Scanner { scannerId      = sId
                                     , beacons        = beacons
                                     , transformation = nullT
@@ -85,9 +108,6 @@ pNumber =
   do
     digits <- many1 digit
     return . readInt $ digits
-
-
-sign = undefined
 
 
 readInt :: String -> Int
