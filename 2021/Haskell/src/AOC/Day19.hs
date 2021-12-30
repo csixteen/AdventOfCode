@@ -37,14 +37,8 @@ data Scanner  = Scanner
   deriving (Show)
 
 
-dist :: Point -> Point -> Int
-dist p1 p2 = x^2 + y^2 + z^2
-  where
-    V3 x y z = p1 ^-^ p2
-
-
-sign :: [Point] -> M.MultiSet Int
-sign bs = M.fromList [dist a b | a <- bs, b <- bs, a /= b]
+instance Show Rotate where
+  show c = show $ appEndo c (V3 1 1 1)
 
 
 couldMatch :: Scanner -> Scanner -> Bool
@@ -56,6 +50,12 @@ couldMatch s1 s2 = s >= 66
 -- -------------------------------
 --      Rotations and helpers
 -- -------------------------------
+
+
+dist :: Point -> Point -> Int
+dist p1 p2 = x^2 + y^2 + z^2
+  where
+    V3 x y z = p1 ^-^ p2
 
 
 {-
@@ -75,17 +75,17 @@ rZ = Endo \(V3 x y z) -> V3 (-y) x z
 rotations :: [Rotate]
 rotations = [a <> b | a <- as, b <- bs]
   where
-    xs = [nullT, rY, rY <> rY, rY <> rY <> rY, rZ, rZ <> rZ <> rZ]
-    ys = [nullT, rX, rX <> rX, rX <> rX <> rX]
+    as = [nullT, rY, rY <> rY, rY <> rY <> rY, rZ, rZ <> rZ <> rZ]
+    bs = [nullT, rX, rX <> rX, rX <> rX <> rX]
 
 
 rotate :: (Additive f, Num a) => f a -> Endo (f a)
 rotate v = Endo (v ^+^)
 
 
--- -----------------------------
---          Parsers
--- -----------------------------
+-- -----------------------------------
+--          Parsers and helpers
+-- -----------------------------------
 
 parseScanners :: Text -> [Scanner]
 parseScanners = fromRight (error "Parsing error") . parse pScanners ""
@@ -125,6 +125,10 @@ pNumber =
   do
     digits <- many1 digit
     return . readInt $ digits
+
+
+sign :: [Point] -> M.MultiSet Int
+sign bs = M.fromList [dist a b | a <- bs, b <- bs, a /= b]
 
 
 readInt :: String -> Int
