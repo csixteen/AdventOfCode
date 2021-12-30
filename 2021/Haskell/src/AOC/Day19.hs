@@ -2,9 +2,10 @@ module AOC.Day19 where
 
 import Data.Either
 import Data.Monoid
+import qualified Data.Set as S
 import Data.Text
 
-import Data.MultiSet as M
+import qualified Data.MultiSet as M
 import Linear (Additive, V3(..), (^+^), (^-^))
 import Relude.File (readFileText)
 import Text.Parsec.Char
@@ -16,7 +17,10 @@ import Text.Parsec.Text
 solve :: IO (Int,Int)
 solve =
   do scanners <- parseScanners <$> readFileText "data/day19_input.txt"
-     return (1,1)
+     putStrLn $ show scanners
+     let
+       part1 = (S.size . S.unions) $ fmap (S.fromList . beacons) scanners
+     return (part1,1)
 
 
 -- -----------------------------------------
@@ -114,7 +118,7 @@ parseScanners = fromRight (error "Parsing error") . parse pScanners ""
 
 
 pScanners :: Parser [Scanner]
-pScanners = pScanner `sepBy` many1 endOfLine
+pScanners = pScanner `sepBy1` newline
 
 
 pScanner :: Parser Scanner
@@ -129,11 +133,11 @@ pScanner = mkScanner <$> pScannerID <*> pBeacons
 
 
 pScannerID :: Parser Int
-pScannerID = between (string "--- scanner ") (string " ---") pNumber
+pScannerID = between (string "--- scanner ") (string " ---\n") pNumber
 
 
 pBeacons :: Parser [Point]
-pBeacons = pBeacon `sepBy` endOfLine
+pBeacons = pBeacon `sepEndBy1` newline
 
 
 pBeacon :: Parser Point
@@ -145,8 +149,9 @@ pBeacon = V3 <$> pNumber
 pNumber :: Parser Int
 pNumber =
   do
+    minus  <- optionMaybe (char '-')
     digits <- many1 digit
-    return . readInt $ digits
+    return . readInt $ maybe digits (:digits) minus
 
 
 sign :: [Point] -> M.MultiSet Int
