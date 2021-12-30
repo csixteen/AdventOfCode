@@ -73,7 +73,7 @@ rZ = Endo \(V3 x y z) -> V3 (-y) x z
 
 -- Returns 24 compositions of rotations in the 3 axis
 rotations :: [Rotate]
-rotations = [x <> y | x <- xs, y <- ys]
+rotations = [a <> b | a <- as, b <- bs]
   where
     xs = [nullT, rY, rY <> rY, rY <> rY <> rY, rZ, rZ <> rZ <> rZ]
     ys = [nullT, rX, rX <> rX, rX <> rX <> rX]
