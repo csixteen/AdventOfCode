@@ -41,6 +41,14 @@ instance Show Rotate where
   show c = show $ appEndo c (V3 1 1 1)
 
 
+-- ----------------------------
+--     Solvers and helpers
+-- ----------------------------
+
+
+-- If two scanners share at least 66 distances between beacons,
+-- then there is a chance that there is a match. The 66 is derived
+-- from (12 * 11) / 2.
 couldMatch :: Scanner -> Scanner -> Bool
 couldMatch s1 s2 = s >= 66
   where
@@ -52,6 +60,7 @@ couldMatch s1 s2 = s >= 66
 -- -------------------------------
 
 
+-- Distance between two points in 3D space
 dist :: Point -> Point -> Int
 dist p1 p2 = x^2 + y^2 + z^2
   where
@@ -64,10 +73,23 @@ This allows us to apply a single rotation or a composition of rotations to a Vec
  appEndo rX (V3 1 1 1) == V3 1 (-1) 1
  appEndo (rX <> rZ) (V3 1 1 2) == V3 (-1) (-2) 1
 -}
-nullT,rX,rY,rZ :: Endo (V3 Int)
+-- No rotation. It helps in the composition, since rX <> nullT == rX
+nullT :: Endo (V3 Int)
 nullT = Endo id
+
+
+-- 90 degrees rotation along the X axis
+rX :: Endo (V3 Int)
 rX = Endo \(V3 x y z) -> V3 x (-z) y
+
+
+-- 90 degrees rotation along the Y axis
+rY :: Endo (V3 Int)
 rY = Endo \(V3 x y z) -> V3 z y (-x)
+
+
+-- 90 degrees rotation along the Z axis
+rZ :: Endo (V3 Int)
 rZ = Endo \(V3 x y z) -> V3 (-y) x z
 
 
@@ -99,10 +121,10 @@ pScanner :: Parser Scanner
 pScanner = mkScanner <$> pScannerID <*> pBeacons
   where
     mkScanner :: Int -> [Point] -> Scanner
-    mkScanner sId beacons = Scanner { scannerId = sId
-                                    , beacons   = beacons
+    mkScanner sId bcs = Scanner { scannerId = sId
+                                    , beacons   = bcs
                                     , rotation  = nullT
-                                    , signature = sign beacons
+                                    , signature = sign bcs
                                     }
 
 
