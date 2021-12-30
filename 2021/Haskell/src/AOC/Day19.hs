@@ -6,7 +6,7 @@ import Data.List
 import Data.Maybe
 import Data.Monoid
 import qualified Data.Set as S
-import Data.Text hiding (filter,length,zip)
+import Data.Text hiding (filter,length,maximum,zip)
 
 import qualified Data.MultiSet as M
 import Linear (Additive, V3(..), (^+^), (^-^))
@@ -22,8 +22,10 @@ solve =
   do scanners <- parseScanners <$> readFileText "data/day19_input.txt"
      let
        scanners' = process scanners
-       part1 = (S.size . S.unions) $ (S.fromList . beacons) <$> scanners'
-     return (part1,1)
+       part1     = (S.size . S.unions) $ (S.fromList . beacons) <$> scanners'
+       origins   = origin <$> scanners'
+       part2     = maximum [manhattan a b | a <- origins, b <- origins]
+     return (part1,part2)
 
 
 -- -----------------------------------------
@@ -126,6 +128,16 @@ matchR s1 s2 = do
 -- -------------------------------
 --      Rotations and helpers
 -- -------------------------------
+
+
+manhattan :: Point -> Point -> Int
+manhattan v1 v2 = (abs x) + (abs y) + (abs z)
+  where
+    (V3 x y z) = v1 ^-^ v2
+
+
+origin :: Scanner -> Point
+origin Scanner{..} = appEndo rotation (V3 0 0 0)
 
 
 -- Distance between two points in 3D space
