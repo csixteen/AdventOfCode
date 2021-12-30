@@ -48,7 +48,7 @@ sign bs = M.fromList [dist a b | a <- bs, b <- bs, a /= b]
 
 
 couldMatch :: Scanner -> Scanner -> Bool
-couldMatch s1 s2 = s >= (12 * 11) `div` 2
+couldMatch s1 s2 = s >= 66
   where
     s = M.size $ M.intersection (signature s1) (signature s2)
 
