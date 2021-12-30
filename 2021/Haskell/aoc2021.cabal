@@ -35,6 +35,7 @@ common common-extensions
                    , DerivingVia
                    , FlexibleInstances
                    , LambdaCase
+                   , RecordWildCards
                    , TypeSynonymInstances
 
 library

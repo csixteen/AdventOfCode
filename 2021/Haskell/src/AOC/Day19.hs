@@ -1,9 +1,12 @@
 module AOC.Day19 where
 
+import Control.Monad
 import Data.Either
+import Data.List
+import Data.Maybe
 import Data.Monoid
 import qualified Data.Set as S
-import Data.Text
+import Data.Text hiding (filter,length,zip)
 
 import qualified Data.MultiSet as M
 import Linear (Additive, V3(..), (^+^), (^-^))
@@ -17,9 +20,9 @@ import Text.Parsec.Text
 solve :: IO (Int,Int)
 solve =
   do scanners <- parseScanners <$> readFileText "data/day19_input.txt"
-     putStrLn $ show scanners
      let
-       part1 = (S.size . S.unions) $ fmap (S.fromList . beacons) scanners
+       scanners' = process scanners
+       part1 = (S.size . S.unions) $ (S.fromList . beacons) <$> scanners'
      return (part1,1)
 
 
@@ -38,16 +41,55 @@ data Scanner  = Scanner
   , rotation  :: Rotate
   , signature :: M.MultiSet Int
   }
-  deriving (Show)
 
 
-instance Show Rotate where
-  show c = show $ appEndo c (V3 1 1 1)
+instance Eq Scanner where
+  s1 == s2 = (scannerId s1) == (scannerId s2)
+
+
+data Processor = Processor
+  { processed   :: [Scanner]
+  , ongoing     :: [Scanner]
+  , unprocessed :: [Scanner]
+  }
 
 
 -- ----------------------------
 --     Solvers and helpers
 -- ----------------------------
+
+
+-- Part 1
+process :: [Scanner] -> [Scanner]
+process (s:ss) = processed $ process' Processor { processed   = []
+                                                , ongoing     = [s]
+                                                , unprocessed = ss
+                                                }
+
+
+process' :: Processor -> Processor
+process' p@Processor{ongoing=[], ..} = p 
+process' p = (process' . step) p
+
+
+step :: Processor -> Processor
+step Processor{..} = Processor { processed   = c : processed
+                               , ongoing     = cs <> ongoing'
+                               , unprocessed = unprocessed'
+                               }
+  where
+    (c : cs)     = ongoing
+    matches      = filter (couldMatch c) unprocessed
+    matches'     = filter (isJust . snd) $ zip matches $ (matchRotation c) <$> matches
+    matches''    = (\(m, r) -> (m, fromJust r)) <$> matches'
+    unprocessed' = unprocessed \\ (fst <$> matches'')
+    ongoing'     = rotateS <$> matches''
+
+
+rotateS :: (Scanner, Rotate) -> Scanner
+rotateS (Scanner{..}, rot) = Scanner { beacons  = (appEndo rot) <$> beacons
+                                     , rotation = rot
+                                     , ..}
 
 
 -- If two scanners share at least 66 distances between beacons,
@@ -57,6 +99,28 @@ couldMatch :: Scanner -> Scanner -> Bool
 couldMatch s1 s2 = s >= 66
   where
     s = M.size $ M.intersection (signature s1) (signature s2)
+
+
+matchRotation :: Scanner -> Scanner -> Maybe Rotate
+matchRotation s1 s2 = listToMaybe $ matchR s1 s2
+
+
+-- Tries to find a rotation that makes Scanner 1 and Scanner 2
+-- match. If no rotation is found, it returns an empty list.
+matchR :: Scanner -> Scanner -> [Rotate]
+matchR s1 s2 = do
+  let
+    beacons1 = beacons s1
+    beacons2 = beacons s2
+  r  <- rotations
+  b1 <- beacons1
+  b2 <- beacons2
+  let
+    t     = b1 ^-^ (appEndo r b2)
+    rot   = rotate t
+    newB2 = (appEndo (rot <> r)) <$> beacons2
+  guard $ (length $ intersect beacons1 newB2) >= 12
+  return (rot <> r)
 
 
 -- -------------------------------
