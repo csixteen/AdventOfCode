@@ -190,10 +190,10 @@ pScanner = mkScanner <$> pScannerID <*> pBeacons
   where
     mkScanner :: Int -> [Point] -> Scanner
     mkScanner sId bcs = Scanner { scannerId = sId
-                                    , beacons   = bcs
-                                    , rotation  = nullT
-                                    , signature = sign bcs
-                                    }
+                                , beacons   = bcs
+                                , rotation  = nullT
+                                , signature = sign bcs
+                                }
 
 
 pScannerID :: Parser Int
