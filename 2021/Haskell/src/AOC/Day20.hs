@@ -34,7 +34,6 @@ data Image = Image
   , region  :: Region
   , distant :: Bool
   }
-  deriving (Show)
 
 type Enhancement = [Bool]
 type State = (Enhancement, Image)
