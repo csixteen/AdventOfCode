@@ -50,14 +50,6 @@ mkImage xs = Image { grid    = px
     px = S.fromList [V2 x' y' | y' <- [0..y], x' <- [0..x], (xs !! y') !! x' == '#']
 
 
--- For debugging purposes
-showImage :: Image -> String
-showImage Image{..} = unlines $ [[showPx (V2 x y) | x <- [0..cols]] | y <- [0..rows]]
-  where
-    (_, V2 cols rows) = region
-    showPx px = if S.member px grid then '█' else '.' 
-
-
 -- -----------------------------
 --      Solvers and helpers
 -- -----------------------------
