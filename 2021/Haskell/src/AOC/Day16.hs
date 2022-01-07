@@ -95,11 +95,6 @@ intOpOp _ = error "Invalid operator"
 
 -- ---------------------------------
 --        Parsers and Helpers
---
--- References:
--- - https://hackage.haskell.org/package/parsec-3.1.15.0
--- - Real-world Haskell (Chapter 16)
--- - https://github.com/sonowz/advent-of-code-haskell/
 -- ---------------------------------
 
 
