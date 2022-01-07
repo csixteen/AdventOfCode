@@ -13,7 +13,7 @@ solve =
   do contents <- readFile "data/day20_input.txt"
      let
        [enh, img] = splitWhen null $ lines contents
-       enh'       = (==('#')) <$> (head enh)
+       enh'       = (=='#') <$> (head enh)
        img'       = mkImage img
        part1      = S.size $ grid $ snd $ (iterate step (enh', img')) !! 2
        part2      = S.size $ grid $ snd $ (iterate step (enh', img')) !! 50
@@ -32,7 +32,7 @@ type Region = (Point,Point)
 data Image = Image
   { grid    :: Grid
   , region  :: Region
-  , distant :: Bool
+  , outside :: Bool
   }
 
 type Enhancement = [Bool]
@@ -41,7 +41,7 @@ type State = (Enhancement, Image)
 mkImage :: [String] -> Image
 mkImage xs = Image { grid    = px
                    , region  = (V2 0 0, V2 x y)
-                   , distant = False
+                   , outside = False
                    }
   where
     x = (length $ head xs) - 1
@@ -55,9 +55,9 @@ mkImage xs = Image { grid    = px
 
 
 step :: State -> State
-step (enh, im@Image{..}) = (enh, Image { grid = grid'
-                                       , region = region'
-                                       , distant = if distant then (last enh) else (head enh)
+step (enh, im@Image{..}) = (enh, Image { grid    = grid'
+                                       , region  = region'
+                                       , outside = if outside then (last enh) else (head enh)
                                     })
   where
     grid'   = foldl' (addPixel enh im) S.empty pts
@@ -73,7 +73,7 @@ addPixel enh img acc pt = if enh !! i then S.insert pt acc else acc
 
 pixel :: Image -> Point -> Bool
 pixel Image{..} pt | inRange region pt = S.member pt grid
-                   | otherwise         = distant
+                   | otherwise         = outside
 
 
 expand :: Region -> Region

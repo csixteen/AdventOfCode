@@ -63,6 +63,7 @@ library
     AOC.Day18
     AOC.Day19
     AOC.Day20
+    AOC.Day21
 
   hs-source-dirs:
     src/
