@@ -56,8 +56,8 @@ mkBoard p1 p2 = Board { player1 = Player p1 0
 play :: Board -> Int
 play b = sc * (tosses b')
   where
-    Player pos sc = loser b'
-    (_, b')       = fromJust $ find hasWinner (iterate step (1,b))
+    Player _ sc = loser b'
+    (_, b')     = fromJust $ find hasWinner (iterate step (1,b))
 
 
 loser :: Board -> Player
