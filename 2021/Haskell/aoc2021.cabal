@@ -85,4 +85,4 @@ executable aoc2021
       , split >=0.2.3.4
       , text >=1.2.5.0
     hs-source-dirs:   src/
-    other-modules: AOC.Day20
+    other-modules: AOC.Day21

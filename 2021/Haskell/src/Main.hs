@@ -1,6 +1,6 @@
 module Main where
 
-import AOC.Day20
+import AOC.Day21
 
 
 main :: IO ()
