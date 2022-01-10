@@ -88,7 +88,7 @@ multiverse board cache = Just $ foldl' (mVerse board) ((0,0), cache) choices
       let
         ((a',b'), cache') = universes' (updateBoard _board c) _cache
         w = (a + a' * (toInteger n), b + b' * (toInteger n))
-        cache'' = M.insert (boardToStr board) w cache'
+        cache'' = M.insert (boardToStr _board) w cache'
       in
         (w, cache'')
 
