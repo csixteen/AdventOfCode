@@ -1,6 +1,5 @@
 module AOC.Day21 where
 
-import Control.Applicative
 import Data.Ix
 import Data.List
 import qualified Data.Map.Strict as M
@@ -76,12 +75,13 @@ universes' b cache = case cache M.!? (boardToStr b) of
 
 
 universes'' :: Board -> Cache -> (Wins, Cache)
-universes'' b cache = fromJust $
-  (wins b cache) <|> (multiverse b cache)
+universes'' b cache = case (wins b cache) of
+  Just (w, cache') -> (w, cache')
+  Nothing          -> multiverse b cache
 
 
-multiverse :: Board -> Cache -> Maybe (Wins, Cache)
-multiverse board cache = Just $ foldl' (mVerse board) ((0,0), cache) choices
+multiverse :: Board -> Cache -> (Wins, Cache)
+multiverse board cache = foldl' (mVerse board) ((0,0), cache) choices
   where
     mVerse :: Board -> (Wins,Cache) -> (Int,Int) -> (Wins,Cache)
     mVerse _board ((a,b), _cache) (c,n) =
