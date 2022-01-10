@@ -42,7 +42,12 @@ data Board = Board
   , turn    :: PlayerT
   , tosses  :: Int
   }
-  deriving (Show)
+
+
+instance Show Board where
+  show Board{..} = show player1 <> "-" <>
+                   show player2 <> "-" <>
+                   show turn
 
 
 type State = (Int, Board)
@@ -58,10 +63,6 @@ mkBoard p1 p2 = Board { player1 = Player p1 0
                       }
 
 
-boardToStr :: Board -> String
-boardToStr Board{..} = concat $ intersperse "-" $ [show player1, show player2, show turn]
-
-
 -- ---------------------------
 --     Solvers and helpers
 -- ---------------------------
@@ -74,7 +75,7 @@ universes b = fst $ universes' b M.empty
 
 
 universes' :: Board -> Cache -> (Wins, Cache)
-universes' b cache = case cache M.!? (boardToStr b) of
+universes' b cache = case cache M.!? (show b) of
   Just v  -> (v, cache)
   Nothing -> universes'' b cache
 
@@ -93,7 +94,7 @@ multiverse board cache = foldl' (mVerse board) ((0,0), cache) choices
       let
         ((a',b'), cache') = universes' (updateBoard _board c) _cache
         w = (a + a' * (toInteger n), b + b' * (toInteger n))
-        cache'' = M.insert (boardToStr _board) w cache'
+        cache'' = M.insert (show _board) w cache'
       in
         (w, cache'')
 
@@ -107,7 +108,7 @@ wins b@Board{..} cache =
         Player _ sc1 = player1
         Player _ sc2 = player2
         w = (if sc1 >= n then 1 else 0, if sc2 >= n then 1 else 0)
-        cache' = M.insert (boardToStr b) w cache
+        cache' = M.insert (show b) w cache
       in
         Just (w, cache')
   where n = 21
@@ -129,12 +130,13 @@ sum3 (a,b,c) = (a + b + c)
 play :: Board -> Int
 play b = sc * (tosses b')
   where
-    Player _ sc = loser b'
-    (_, b')     = fromJust $ find ((flip hasWinner) 1000) (iterate step (1,b))
+    Player _ sc = loser b' n
+    (_, b')     = fromJust $ find ((flip hasWinner) n) (iterate step (1,b))
+    n           = 1000
 
 
-loser :: Board -> Player
-loser Board{..} = if isWinner player1 1000 then player2 else player1
+loser :: Board -> Int -> Player
+loser Board{..} n = if isWinner player1 n then player2 else player1
 
 
 isWinner :: Player -> Int -> Bool
