@@ -100,16 +100,17 @@ multiverse board cache = foldl' (mVerse board) ((0,0), cache) choices
 
 wins :: Board -> Cache -> Maybe (Wins,Cache)
 wins b@Board{..} cache =
-  case hasWinner (0, b) of
+  case hasWinner (0, b) n of
     False -> Nothing
     True  ->
       let
         Player _ sc1 = player1
         Player _ sc2 = player2
-        w = (if sc1 > 20 then 1 else 0, if sc2 > 20 then 1 else 0)
+        w = (if sc1 >= n then 1 else 0, if sc2 >= n then 1 else 0)
         cache' = M.insert (boardToStr b) w cache
       in
         Just (w, cache')
+  where n = 21
 
 
 choices :: [(Int,Int)]
@@ -129,19 +130,19 @@ play :: Board -> Int
 play b = sc * (tosses b')
   where
     Player _ sc = loser b'
-    (_, b')     = fromJust $ find hasWinner (iterate step (1,b))
+    (_, b')     = fromJust $ find ((flip hasWinner) 1000) (iterate step (1,b))
 
 
 loser :: Board -> Player
-loser Board{..} = if isWinner player1 then player2 else player1
+loser Board{..} = if isWinner player1 1000 then player2 else player1
 
 
-isWinner :: Player -> Bool
-isWinner (Player _ sc) = sc >= 1000
+isWinner :: Player -> Int -> Bool
+isWinner (Player _ sc) n = sc >= n
 
 
-hasWinner :: State -> Bool
-hasWinner (_, Board{..}) = isWinner player1 || isWinner player2
+hasWinner :: State -> Int -> Bool
+hasWinner (_, Board{..}) n = isWinner player1 n || isWinner player2 n
 
 
 step :: State -> State
