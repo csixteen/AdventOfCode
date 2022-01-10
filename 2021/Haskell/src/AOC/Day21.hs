@@ -24,7 +24,9 @@ type Score    = Int
 
 
 data Player = Player Position Score
-  deriving (Show)
+
+instance Show Player where
+  show (Player pos sc) = (show pos) <> "-" <> (show sc)
 
 
 data PlayerT = One | Two
