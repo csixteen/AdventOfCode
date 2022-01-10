@@ -30,7 +30,10 @@ instance Show Player where
 
 
 data PlayerT = One | Two
-  deriving (Eq, Show)
+
+instance Show PlayerT where
+  show One = show (1 :: Int)
+  show Two = show (2 :: Int)
 
 
 data Board = Board
