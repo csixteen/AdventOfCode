@@ -7,7 +7,7 @@ import qualified Data.Map.Strict as M
 import Data.Maybe
 
 
-solve :: IO (Int,Int)
+solve :: IO (Int,Integer)
 solve =
   do let board = mkBoard 3 7
          part1 = play board
@@ -42,8 +42,8 @@ data Board = Board
 
 
 type State = (Int, Board)
-type Cache = M.Map String (Int,Int)
-type Wins  = (Int,Int)
+type Cache = M.Map String (Integer,Integer)
+type Wins  = (Integer,Integer)
 
 
 mkBoard :: Position -> Position -> Board
@@ -87,7 +87,7 @@ multiverse board cache = Just $ foldl' (mVerse board) ((0,0), cache) choices
     mVerse _board ((a,b), _cache) (c,n) =
       let
         ((a',b'), cache') = universes' (updateBoard _board c) _cache
-        w = (a + a' * n, b + b' * n)
+        w = (a + a' * (toInteger n), b + b' * (toInteger n))
         cache'' = M.insert (boardToStr board) w cache'
       in
         (w, cache'')
@@ -115,7 +115,7 @@ choices = M.assocs m
 
 
 sum3 :: (Int,Int,Int) -> Int
-sum3 (a,b,c) = a + b + c
+sum3 (a,b,c) = (a + b + c)
 
 
 -- Part 1
