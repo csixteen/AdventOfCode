@@ -175,7 +175,7 @@ updatePlayer (Player pos sc) s = Player pos' sc'
 rollDie :: Int -> ([Int], Int)
 rollDie n = (xs, n')
   where
-    xs = (\x -> x `_mod` 100) <$> [n..n+2]
+    xs = (`_mod` 100) <$> [n..n+2]
     n' = 1 + last xs
 
 
