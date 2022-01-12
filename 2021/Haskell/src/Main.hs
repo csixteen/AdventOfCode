@@ -1,10 +1,10 @@
 module Main where
 
-import AOC.Day21
+import AOC.Day22
 
 
 main :: IO ()
 main =
   do (x, y) <- solve
-     putStrLn $ "Day21 (part 1): " ++ (show x)
-     putStrLn $ "Day21 (part 2): " ++ (show y)
+     putStrLn $ "Day22 (part 1): " ++ (show x)
+     putStrLn $ "Day22 (part 2): " ++ (show y)

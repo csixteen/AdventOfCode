@@ -21,6 +21,7 @@ module AOC
   , module AOC.Day19
   , module AOC.Day20
   , module AOC.Day21
+  , module AOC.Day22
   ) where
 
 
@@ -45,3 +46,4 @@ import AOC.Day18
 import AOC.Day19
 import AOC.Day20
 import AOC.Day21
+import AOC.Day22

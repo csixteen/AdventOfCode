@@ -64,6 +64,7 @@ library
     AOC.Day19
     AOC.Day20
     AOC.Day21
+    AOC.Day22
 
   hs-source-dirs:
     src/
@@ -85,4 +86,4 @@ executable aoc2021
       , split >=0.2.3.4
       , text >=1.2.5.0
     hs-source-dirs:   src/
-    other-modules: AOC.Day21
+    other-modules: AOC.Day22
