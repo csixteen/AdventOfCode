@@ -13,6 +13,7 @@ import Text.Parsec.Text
 solve :: IO (Int,Int)
 solve =
   do toggles <- parseToggles <$> readFileText "data/day22_input.txt"
+     putStrLn $ show toggles
      return (1,1)
 
 
@@ -51,7 +52,7 @@ parseToggles = fromRight (error "Parsing error") . parse pToggles ""
 
 
 pToggles :: Parser [Toggle]
-pToggles = pToggle `sepBy1` newline
+pToggles = pToggle `sepEndBy1` newline
 
 
 pToggle :: Parser Toggle
