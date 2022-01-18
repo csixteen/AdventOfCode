@@ -1,7 +1,8 @@
 module AOC.Day22 where
 
 import Data.Either
-import Data.Text
+import qualified Data.Set as S
+import Data.Text hiding (filter)
 
 import Relude.File (readFileText)
 import Text.Parsec.Char
@@ -13,7 +14,6 @@ import Text.Parsec.Text
 solve :: IO (Int,Int)
 solve =
   do toggles <- parseToggles <$> readFileText "data/day22_input.txt"
-     putStrLn $ show toggles
      return (1,1)
 
 
@@ -40,6 +40,38 @@ data Toggle = Toggle
   , action :: Action
   }
   deriving (Eq,Show)
+
+
+type Grid = S.Set Cuboid
+
+
+points :: Cuboid -> Int
+points Cuboid{..} = ((maxX - minX) + 1) *
+                    ((maxY - minY) + 1) *
+                    ((maxZ - minZ) + 1)
+
+
+-- --------------------------
+--    Solvers and helpers
+-- --------------------------
+
+
+part1 :: [Toggle] -> Int
+part1 toggles = sum $ points <$> S.elems grid
+  where
+    grid      = step S.empty toggles'
+    toggles'  = filter (fifties . cuboid) toggles
+    fifties Cuboid{..} = minX >= -50 &&
+                         maxX <= 50  &&
+                         minY >= -50 &&
+                         maxY <= 50  &&
+                         minZ >= -50 &&
+                         maxZ <= 50
+
+
+step :: Grid -> [Toggle] -> Grid
+step grid (t:ts) = undefined
+step grid []     = grid
 
 
 -- ---------------
