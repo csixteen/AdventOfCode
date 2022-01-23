@@ -33,6 +33,9 @@ data Cuboid = Cuboid
   deriving (Eq,Show)
 
 
+instance Ord Cuboid
+
+
 validCuboid :: Cuboid -> Bool
 validCuboid Cuboid{..} = minX <= maxX &&
                          minY <= maxY &&
@@ -81,8 +84,16 @@ part1 toggles = sum $ points <$> S.elems grid
 
 
 step :: Grid -> [Toggle] -> Grid
-step grid []     = grid
-step grid (Toggle{..}:ts) = undefined
+step grid []              = grid
+step grid (t@Toggle{..}:ts) = step grid'' ts
+  where
+    (cs, cs') = partition (intersects cuboid) $ S.elems grid
+    grid'     = foldr S.insert S.empty cs'
+    grid''    = step' t cs grid'
+
+
+step' :: Toggle -> [Cuboid] -> Grid -> Grid
+step' = undefined
 
 
 explode :: Cuboid -> Grid -> Cuboid -> Grid
