@@ -30,10 +30,7 @@ data Cuboid = Cuboid
   , minZ :: Int
   , maxZ :: Int
   }
-  deriving (Eq,Show)
-
-
-instance Ord Cuboid
+  deriving (Eq,Ord,Show)
 
 
 validCuboid :: Cuboid -> Bool
