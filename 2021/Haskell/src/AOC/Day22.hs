@@ -1,8 +1,9 @@
 module AOC.Day22 where
 
 import Data.Either
+import Data.List
 import qualified Data.Set as S
-import Data.Text hiding (filter)
+import qualified Data.Text as T
 
 import Relude.File (readFileText)
 import Text.Parsec.Char
@@ -30,6 +31,16 @@ data Cuboid = Cuboid
   , maxZ :: Int
   }
   deriving (Eq,Show)
+
+
+validCuboid :: Cuboid -> Bool
+validCuboid Cuboid{..} = minX <= maxX &&
+                         minY <= maxY &&
+                         minZ <= maxZ
+
+
+intersects :: Cuboid -> Cuboid -> Bool
+intersects = undefined
 
 
 data Action = On | Off deriving (Eq,Show)
@@ -70,8 +81,12 @@ part1 toggles = sum $ points <$> S.elems grid
 
 
 step :: Grid -> [Toggle] -> Grid
-step grid (t:ts) = undefined
 step grid []     = grid
+step grid (Toggle{..}:ts) = undefined
+
+
+explode :: Cuboid -> Grid -> Cuboid -> Grid
+explode c1 acc c2 = undefined
 
 
 -- ---------------
@@ -79,7 +94,7 @@ step grid []     = grid
 -- ---------------
 
 
-parseToggles :: Text -> [Toggle]
+parseToggles :: T.Text -> [Toggle]
 parseToggles = fromRight (error "Parsing error") . parse pToggles ""
 
 
