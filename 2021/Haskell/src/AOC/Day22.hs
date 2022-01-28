@@ -33,16 +33,6 @@ data Cuboid = Cuboid
   deriving (Eq,Ord,Show)
 
 
-validCuboid :: Cuboid -> Bool
-validCuboid Cuboid{..} = minX <= maxX &&
-                         minY <= maxY &&
-                         minZ <= maxZ
-
-
-intersects :: Cuboid -> Cuboid -> Bool
-intersects = undefined
-
-
 data Action = On | Off deriving (Eq,Show)
 
 
@@ -60,6 +50,25 @@ points :: Cuboid -> Int
 points Cuboid{..} = ((maxX - minX) + 1) *
                     ((maxY - minY) + 1) *
                     ((maxZ - minZ) + 1)
+
+
+validCuboid :: Cuboid -> Bool
+validCuboid Cuboid{..} = minX <= maxX &&
+                         minY <= maxY &&
+                         minZ <= maxZ
+
+
+intersects :: Cuboid -> Cuboid -> Bool
+intersects a b = intersects' a b || intersects' b a
+
+
+intersects' :: Cuboid -> Cuboid -> Bool
+intersects' a b = interX a b && interY a b && interZ a b
+  where
+    interX c1 c2 = interDim (minX c1) (maxX c1) (minX c2) (maxX c2)
+    interY c1 c2 = interDim (minY c1) (maxY c1) (minY c2) (maxY c2)
+    interZ c1 c2 = interDim (minZ c1) (maxZ c1) (minZ c2) (maxZ c2)
+    interDim aMin aMax bMin bMax = aMin <= bMax && aMax >= bMin
 
 
 -- --------------------------
