@@ -82,11 +82,11 @@ part1 toggles = sum $ points <$> S.elems grid
     grid      = step S.empty toggles'
     toggles'  = filter (fifties . cuboid) toggles
     fifties Cuboid{..} = minX >= -50 &&
-                         maxX <= 50  &&
+                         maxX <=  50 &&
                          minY >= -50 &&
-                         maxY <= 50  &&
+                         maxY <=  50 &&
                          minZ >= -50 &&
-                         maxZ <= 50
+                         maxZ <=  50
 
 
 step :: Grid -> [Toggle] -> Grid
