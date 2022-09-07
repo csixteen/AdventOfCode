@@ -1,10 +1,15 @@
 [package]
-name = "Day2"
+name = "aoc-rs"
 version = "0.1.0"
 authors = ["Pedro Rodrigues <csixteen@proton.me>"]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[workspace]
+members = ["lib"]
+
 [dependencies]
-aoc-core = { version = "0.1.0", path = "../../../lib/Rust/aoc" }
+aoc = { path = "lib" }
+lazy_static = "1.4.0"
+regex = "1.4.2"

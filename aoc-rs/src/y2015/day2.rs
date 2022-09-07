@@ -2,7 +2,7 @@
 
 use std::str::FromStr;
 
-use aoc::fs::get_file_contents;
+use aoc::Solver;
 
 #[derive(Clone,Debug,PartialEq)]
 struct Dimension {
@@ -43,23 +43,28 @@ impl Dimension {
     }
 }
 
-fn total_square_feet(lines: &Vec<String>) -> i32 {
-    lines.iter().fold(0, |acc, d| acc + Dimension::from_str(d).square_feet())
+pub struct Solution;
+
+impl Solution {
+    fn total_square_feet(lines: &Vec<&str>) -> i32 {
+        lines.iter().fold(0, |acc, d| acc + Dimension::from_str(d).square_feet())
+    }
+
+    fn total_ribbon(lines: &Vec<&str>) -> i32 {
+        lines.iter().fold(0, |acc, d| acc + Dimension::from_str(d).ribbon())
+    }
 }
 
-fn total_ribbon(lines: &Vec<String>) -> i32 {
-    lines.iter().fold(0, |acc, d| acc + Dimension::from_str(d).ribbon())
+impl Solver for Solution {
+    fn part1(&self, input: &Vec<&str>) -> String {
+        Solution::total_square_feet(input).to_string()
+    }
+
+    fn part2(&self, input: &Vec<&str>) -> String {
+        Solution::total_ribbon(input).to_string()
+    }
 }
 
-
-fn main() -> std::io::Result<()> {
-    let lines: Vec<String> = get_file_contents("data/input.txt")?;
-
-    println!("Part 1: {}", total_square_feet(&lines));
-    println!("Part 2: {}", total_ribbon(&lines));
-
-    Ok(())
-}
 
 #[cfg(test)]
 mod tests {
