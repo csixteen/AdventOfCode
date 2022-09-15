@@ -1,35 +1,11 @@
-// MIT License
-//
-// Copyright (c) 2020 Pedro Rodrigues
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-
-// https://adventofcode.com/2020/day/7
-
 use std::collections::{HashMap, HashSet};
 use std::str::FromStr;
 
-use aoc::fs::get_file_contents;
+use aoc::Solver;
 use lazy_static::lazy_static;
 use regex::Regex;
 
-fn build_graph(rules: &Vec<String>) -> HashMap<String, HashSet<String>> {
+fn build_graph(rules: &Vec<&str>) -> HashMap<String, HashSet<String>> {
     lazy_static! {
         static ref CONTAINS: Regex = Regex::new(r"(.*) bags? contain (.*)").unwrap();
         static ref CONTAINED: Regex = Regex::new(r"(\d+) (.*) bags?").unwrap();
@@ -67,7 +43,7 @@ fn contain_color(graph: &HashMap<String, HashSet<String>>, color: &str, acc: &mu
     };
 }
 
-fn total_containing_bags(rules: &Vec<String>, color: &str) -> usize {
+fn total_containing_bags(rules: &Vec<&str>, color: &str) -> usize {
     let graph = build_graph(&rules);
     let mut acc = HashSet::new();
     contain_color(&graph, color, &mut acc);
@@ -75,7 +51,7 @@ fn total_containing_bags(rules: &Vec<String>, color: &str) -> usize {
     acc.len()
 }
 
-fn build_inverted_graph(rules: &Vec<String>) -> HashMap<String, HashSet<(usize, String)>> {
+fn build_inverted_graph(rules: &Vec<&str>) -> HashMap<String, HashSet<(usize, String)>> {
     lazy_static! {
         static ref CONTAINS: Regex = Regex::new(r"(.*) bags? contain (.*)").unwrap();
         static ref CONTAINED: Regex = Regex::new(r"(\d+) (.*) bags?").unwrap();
@@ -113,18 +89,21 @@ fn contained_colors(graph: &HashMap<String, HashSet<(usize,String)>>, color: &st
     }
 }
 
-fn total_contained_bags(rules: &Vec<String>, color: &str) -> usize {
+fn total_contained_bags(rules: &Vec<&str>, color: &str) -> usize {
     let graph = build_inverted_graph(&rules);
     contained_colors(&graph, color)
 }
 
-fn main() -> std::io::Result<()> {
-    let lines = get_file_contents("data/input.txt")?;
+pub struct Solution;
 
-    println!("Day 7 / part 1: {}", total_containing_bags(&lines, "shiny gold"));
-    println!("Day 7 / part 2: {}", total_contained_bags(&lines, "shiny gold"));
+impl Solver for Solution {
+    fn part1(&self, input: &Vec<&str>) -> String {
+        total_containing_bags(input, "shiny gold").to_string()
+    }
 
-    Ok(())
+    fn part2(&self, input: &Vec<&str>) -> String {
+        total_contained_bags(input, "shiny gold").to_string()
+    }
 }
 
 #[cfg(test)]
