@@ -1,10 +1,10 @@
-mod y2015;
-mod y2020;
-
 use std::io;
 use std::io::Read;
 
 use aoc::Solver;
+
+mod y2015;
+mod y2020;
 
 fn main() -> std::io::Result<()> {
     let mut input = String::new();
