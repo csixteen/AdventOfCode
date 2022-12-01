@@ -9,7 +9,7 @@ use aoc::math::two_sum;
 
 const TARGET_SUM: i32 = 2020;
 
-struct Solution;
+pub struct Solution;
 
 impl Solution {
     fn two_sum_part2(nums: &Vec<i32>, i: usize) -> Option<(i32, i32, i32)> {

@@ -108,13 +108,11 @@ mod tests {
     fn test_no_valid_passports() {
         assert_eq!(
             0,
-            count_valid_passports(
-                vec![
-                    String::from("eyr:2027"),
-                    String::new(),
-                    String::from("byr:1981")
-                ],
-            ),
+            Solution::count_valid_passports(&vec![
+                    "eyr:2027",
+                    "",
+                    "byr:1981"
+                ],),
         );
     }
 
@@ -122,8 +120,8 @@ mod tests {
     fn test_two_valid_passport() {
         assert_eq!(
             2,
-            count_valid_passports(
-                vec![
+            Solution::count_valid_passports(
+                &vec![
                     "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd",
                     "byr:1937 iyr:2017 cid:147 hgt:183cm",
                     "",
@@ -137,25 +135,25 @@ mod tests {
                     "",
                     "hcl:#cfa07d eyr:2025 pid:166559648",
                     "iyr:2011 ecl:brn hgt:59in"
-                ].iter().map(|&line| String::from(line)).collect()
+                ]
             ),
         );
     }
 
     #[test]
     fn test_valid_fields() {
-        assert!(is_valid_field("byr", "2002"));
-        assert!(!is_valid_field("byr", "2003"));
-        assert!(is_valid_field("hgt", "60in"));
-        assert!(is_valid_field("hgt", "190cm"));
-        assert!(!is_valid_field("hgt", "190in"));
-        assert!(!is_valid_field("hgt", "190"));
-        assert!(is_valid_field("hcl", "#123abc"));
-        assert!(!is_valid_field("hcl", "#123abz"));
-        assert!(!is_valid_field("hcl", "123abc"));
-        assert!(is_valid_field("ecl", "brn"));
-        assert!(!is_valid_field("ecl", "wat"));
-        assert!(is_valid_field("pid", "000000001"));
-        assert!(!is_valid_field("pid", "0123456789"));
+        assert!(Solution::is_valid_field("byr", "2002"));
+        assert!(!Solution::is_valid_field("byr", "2003"));
+        assert!(Solution::is_valid_field("hgt", "60in"));
+        assert!(Solution::is_valid_field("hgt", "190cm"));
+        assert!(!Solution::is_valid_field("hgt", "190in"));
+        assert!(!Solution::is_valid_field("hgt", "190"));
+        assert!(Solution::is_valid_field("hcl", "#123abc"));
+        assert!(!Solution::is_valid_field("hcl", "#123abz"));
+        assert!(!Solution::is_valid_field("hcl", "123abc"));
+        assert!(Solution::is_valid_field("ecl", "brn"));
+        assert!(!Solution::is_valid_field("ecl", "wat"));
+        assert!(Solution::is_valid_field("pid", "000000001"));
+        assert!(!Solution::is_valid_field("pid", "0123456789"));
     }
 }

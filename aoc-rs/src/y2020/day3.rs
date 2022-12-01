@@ -62,11 +62,7 @@ mod tests {
     fn test_count_trees() {
         assert_eq!(
             7,
-            Solution::count_trees(
-                &MAP.to_vec().iter().map(|&l| String::from(l)).collect(),
-                3,
-                1,
-            ),
+            Solution::count_trees(&MAP.to_vec(), 3, 1),
         );
     }
 
@@ -74,9 +70,7 @@ mod tests {
     fn test_count_trees_all_slopes() {
         assert_eq!(
             336,
-            Solution::count_trees_all_slopes(
-                &MAP.to_vec().iter().map(|&l| String::from(l)).collect(),
-            ),
+            Solution::count_trees_all_slopes(&MAP.to_vec()),
         );
     }
 }

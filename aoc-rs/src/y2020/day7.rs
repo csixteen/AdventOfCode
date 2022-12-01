@@ -132,13 +132,9 @@ mod tests {
         "dark violet bags contain no other bags.",
     ];
 
-    fn proper_vec(v: Vec<&str>) -> Vec<String> {
-        v.iter().map(|&x| String::from(x)).collect()
-    }
-
     #[test]
     fn test_build_graph() {
-        let graph = build_graph(&proper_vec(RULES.to_vec().clone()));
+        let graph = build_graph(&RULES.to_vec());
 
         assert!(graph.contains_key("shiny gold"));
         assert!(graph.get("shiny gold").unwrap().contains("bright white"));
@@ -149,7 +145,7 @@ mod tests {
     fn test_total_containing_bags() {
         assert_eq!(
             4,
-            total_containing_bags(&proper_vec(RULES.to_vec().clone()), "shiny gold"),
+            total_containing_bags(&RULES.to_vec(), "shiny gold"),
         );
     }
 
@@ -157,11 +153,11 @@ mod tests {
     fn test_total_contained_bags() {
         assert_eq!(
             32,
-            total_contained_bags(&proper_vec(RULES.to_vec().clone()), "shiny gold"),
+            total_contained_bags(&RULES.to_vec(), "shiny gold"),
         );
         assert_eq!(
             126,
-            total_contained_bags(&proper_vec(RULES2.to_vec().clone()), "shiny gold"),
+            total_contained_bags(&RULES2.to_vec(), "shiny gold"),
         );
     }
 }

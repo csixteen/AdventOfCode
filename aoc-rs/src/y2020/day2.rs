@@ -89,9 +89,7 @@ mod tests {
     fn test_count_valid_passwords_part1() {
         assert_eq!(
             2,
-            Solution::count_valid_passwords_part1(
-                &RULES.to_vec().iter().map(|&s| String::from(s)).collect(),
-            )
+            Solution::count_valid_passwords_part1(&RULES.to_vec())
         );
     }
 
@@ -99,9 +97,7 @@ mod tests {
     fn test_count_valid_passwords_part2() {
         assert_eq!(
             1,
-            Solution::count_valid_passwords_part2(
-                &RULES.to_vec().iter().map(|&s| String::from(s)).collect(),
-            )
+            Solution::count_valid_passwords_part2(&RULES.to_vec())
         );
     }
 }

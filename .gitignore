@@ -6,3 +6,4 @@
 dist-newstyle/
 target/
 cabal.project.local~*
+.idea

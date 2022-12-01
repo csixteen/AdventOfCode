@@ -68,10 +68,6 @@ impl Solver for Solution {
 mod tests {
     use super::*;
 
-    fn proper_vec(v: Vec<&str>) -> Vec<String> {
-        v.iter().map(|&x| String::from(x)).collect()
-    }
-
     #[test]
     fn test_individual_answers() {
         assert_eq!(0x7, Solution::individual_answers("abc"));
@@ -81,51 +77,47 @@ mod tests {
 
     #[test]
     fn test_count_group_answers() {
-        assert_eq!(3, Solution::count_group_answers(&proper_vec(vec!["abc"])));
-        assert_eq!(3, Solution::count_group_answers(&proper_vec(vec!["a", "b", "c"])));
-        assert_eq!(3, Solution::count_group_answers(&proper_vec(vec!["ab", "ac"])));
-        assert_eq!(1, Solution::count_group_answers(&proper_vec(vec!["a", "a", "a", "a"])));
-        assert_eq!(1, Solution::count_group_answers(&proper_vec(vec!["b"])));
+        assert_eq!(3, Solution::count_group_answers(&vec!["abc"]));
+        assert_eq!(3, Solution::count_group_answers(&vec!["a", "b", "c"]));
+        assert_eq!(3, Solution::count_group_answers(&vec!["ab", "ac"]));
+        assert_eq!(1, Solution::count_group_answers(&vec!["a", "a", "a", "a"]));
+        assert_eq!(1, Solution::count_group_answers(&vec!["b"]));
     }
 
     #[test]
     fn test_count_total_answers() {
         assert_eq!(
             11,
-            Solution::count_total_answers(
-                &vec![
-                    proper_vec(vec!["abc"]),
-                    proper_vec(vec!["a", "b", "c"]),
-                    proper_vec(vec!["ab", "ac"]),
-                    proper_vec(vec!["a", "a", "a", "a"]),
-                    proper_vec(vec!["b"]),
-                ],
-            ),
+            Solution::count_total_answers(&vec![
+                    vec!["abc"],
+                    vec!["a", "b", "c"],
+                    vec!["ab", "ac"],
+                    vec!["a", "a", "a", "a"],
+                    vec!["b"],
+                ],),
         );
     }
 
     #[test]
     fn test_count_group_all_yes() {
-        assert_eq!(3, Solution::count_group_all_yes(&proper_vec(vec!["abc"])));
-        assert_eq!(0, Solution::count_group_all_yes(&proper_vec(vec!["a", "b", "c"])));
-        assert_eq!(1, Solution::count_group_all_yes(&proper_vec(vec!["ab", "ac"])));
-        assert_eq!(1, Solution::count_group_all_yes(&proper_vec(vec!["a", "a", "a", "a"])));
-        assert_eq!(1, Solution::count_group_all_yes(&proper_vec(vec!["b"])));
+        assert_eq!(3, Solution::count_group_all_yes(&vec!["abc"]));
+        assert_eq!(0, Solution::count_group_all_yes(&vec!["a", "b", "c"]));
+        assert_eq!(1, Solution::count_group_all_yes(&vec!["ab", "ac"]));
+        assert_eq!(1, Solution::count_group_all_yes(&vec!["a", "a", "a", "a"]));
+        assert_eq!(1, Solution::count_group_all_yes(&vec!["b"]));
     }
 
     #[test]
     fn test_count_total_all_yes() {
         assert_eq!(
             6,
-            Solution::count_total_all_yes(
-                &vec![
-                    proper_vec(vec!["abc"]),
-                    proper_vec(vec!["a", "b", "c"]),
-                    proper_vec(vec!["ab", "ac"]),
-                    proper_vec(vec!["a", "a", "a", "a"]),
-                    proper_vec(vec!["b"]),
-                ],
-            ),
+            Solution::count_total_all_yes(&vec![
+                    vec!["abc"],
+                    vec!["a", "b", "c"],
+                    vec!["ab", "ac"],
+                    vec!["a", "a", "a", "a"],
+                    vec!["b"],
+                ],),
         );
     }
 }
