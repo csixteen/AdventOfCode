@@ -23,7 +23,29 @@
 pub mod fs;
 pub mod math;
 
+#[macro_export]
+macro_rules! set {
+    ( $( $x:expr ),* ) => {{
+        let mut temp_set = std::collections::HashSet::new();
+        $(
+            temp_set.insert($x);
+        )*
+        temp_set
+    }};
+}
+
 pub trait Solver {
     fn part1(&self, input: &Vec<&str>) -> String;
     fn part2(&self, input: &Vec<&str>) -> String;
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_set() {
+        let s = set![1, 2, 3];
+        assert_eq!(3, s.len());
+    }
 }

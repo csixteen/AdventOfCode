@@ -1,7 +1,6 @@
 use std::cmp::Ordering;
 use std::str::FromStr;
 
-use aoc::fs::get_file_contents;
 use aoc::math::two_sum;
 
 use aoc::Solver;
