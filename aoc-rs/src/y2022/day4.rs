@@ -10,12 +10,14 @@ impl Section {
         Section(parts.next().unwrap(), parts.next().unwrap())
     }
 
-    fn contains(&self, other: &Section) -> bool {
-        self.0 <= other.0 && self.1 >= other.1
+    fn contained(&self, other: &Section) -> bool {
+        (self.0 <= other.0 && self.1 >= other.1) || (other.0 <= self.0 && other.1 >= self.1)
     }
 
     fn overlaps(&self, other: &Section) -> bool {
-        self.contains(other) || (self.1 >= other.0 && self.0 <= other.0)
+        self.contained(other)
+            || (self.1 >= other.0 && self.0 <= other.0)
+            || (other.1 >= self.0 && other.0 <= self.0)
     }
 }
 
@@ -29,7 +31,7 @@ impl Solution {
                 let mut elves = line.split(",");
                 let elf1 = Section::new(elves.next().unwrap());
                 let elf2 = Section::new(elves.next().unwrap());
-                f(&elf1, &elf2) || f(&elf2, &elf1)
+                f(&elf1, &elf2)
             })
             .filter(|&p| p)
             .count()
@@ -37,11 +39,11 @@ impl Solution {
     }
 
     fn contained(elf1: &Section, elf2: &Section) -> bool {
-        elf1.contains(elf2) || elf2.contains(elf1)
+        elf1.contained(elf2)
     }
 
     fn overlap(elf1: &Section, elf2: &Section) -> bool {
-        elf1.overlaps(elf2) || elf2.overlaps(elf1)
+        elf1.overlaps(elf2)
     }
 }
 
