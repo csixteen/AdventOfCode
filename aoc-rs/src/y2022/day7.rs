@@ -14,7 +14,7 @@ struct Node {
 }
 
 impl Node {
-    fn new_node(size: usize, is_dir: bool, parent: Option<Weak<Node>>) -> Node {
+    fn new(size: usize, is_dir: bool, parent: Option<Weak<Node>>) -> Node {
         Node {
             is_dir,
             size,
@@ -25,7 +25,7 @@ impl Node {
 
     fn add_node(self: &Rc<Self>, name: &str, size: usize, is_dir: bool) -> Rc<Node> {
         let parent = Some(Rc::downgrade(self));
-        let node = Rc::new(Node::new_node(size, is_dir, parent));
+        let node = Rc::new(Node::new(size, is_dir, parent));
         self.children
             .borrow_mut()
             .insert(name.to_string(), node.clone());
@@ -83,7 +83,7 @@ pub struct Solution;
 
 impl Solution {
     fn build_root() -> Node {
-        Node::new_node(0, true, None)
+        Node::new(0, true, None)
     }
 
     fn build_tree(input: &[&str]) -> Rc<Node> {
