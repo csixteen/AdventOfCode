@@ -23,10 +23,6 @@ impl Node {
         }
     }
 
-    fn new_dir(parent: Option<Weak<Node>>) -> Node {
-        Node::new_node(0, true, parent)
-    }
-
     fn add_node(self: &Rc<Self>, name: &str, size: usize, is_dir: bool) -> Rc<Node> {
         let parent = Some(Rc::downgrade(self));
         let node = Rc::new(Node::new_node(size, is_dir, parent));
@@ -86,8 +82,12 @@ impl Node {
 pub struct Solution;
 
 impl Solution {
+    fn build_root() -> Node {
+        Node::new_node(0, true, None)
+    }
+
     fn build_tree(input: &[&str]) -> Rc<Node> {
-        let root = Rc::new(Node::new_dir(None));
+        let root = Rc::new(Self::build_root());
         let mut curr = root.clone();
         for &line in input.iter().skip(1) {
             let parts: Vec<_> = line.split(' ').collect();
@@ -135,20 +135,20 @@ mod tests {
 
     #[test]
     fn test_total_size_empty_dir() {
-        let dir = Node::new_dir(None);
+        let dir = Solution::build_root();
         assert_eq!(0, dir.total_size());
     }
 
     #[test]
     fn test_total_size_dir_with_files() {
-        let dir = Rc::new(Node::new_dir(None));
+        let dir = Rc::new(Solution::build_root());
         dir.add_file("foobar.txt", 123);
         assert_eq!(123, dir.total_size());
     }
 
     #[test]
     fn test_total_size_dir_with_subdirs() {
-        let dir = Rc::new(Node::new_dir(None));
+        let dir = Rc::new(Solution::build_root());
         let dir_a = dir.add_dir("a");
         dir_a.add_file("foobar.txt", 123);
         assert_eq!(123, dir.total_size());
