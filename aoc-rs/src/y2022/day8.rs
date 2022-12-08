@@ -105,6 +105,10 @@ impl Solution {
 
         forest
     }
+
+    fn build_forest_part2(input: &Vec<&str>) -> Forest {
+        todo!()
+    }
 }
 
 impl Solver for Solution {
@@ -129,7 +133,13 @@ impl Solver for Solution {
     }
 
     fn part2(&self, input: &Vec<&str>) -> String {
-        todo!()
+        let forest = Solution::build_forest_part2(input);
+        forest
+            .iter()
+            .map(|row| row.iter().map(|tree| tree.scenic_score()).max().unwrap())
+            .max()
+            .unwrap()
+            .to_string()
     }
 }
 
@@ -170,6 +180,7 @@ mod tests {
         );
     }
 
+    #[test]
     fn test_build_forest_part2() {
         assert_eq!(
             vec![
@@ -191,5 +202,14 @@ mod tests {
             ],
             Solution::build_forest_part2(&vec!["303", "255", "653"])
         )
+    }
+
+    #[test]
+    fn part2() {
+        let solver = Solution;
+        assert_eq!(
+            "8",
+            solver.part2(&vec!["30373", "25512", "65332", "33549", "35390"])
+        );
     }
 }
