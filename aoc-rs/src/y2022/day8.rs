@@ -1,6 +1,6 @@
+use std::fmt::{self, Formatter};
+
 use aoc::Solver;
-use std::fmt;
-use std::fmt::Formatter;
 
 // A tree is a tuple with 5 elements, where the first
 // element is its height and the other 4 elements are
