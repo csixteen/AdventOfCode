@@ -16,7 +16,7 @@ use std::fmt::Formatter;
 // In part 1, the adjacent positions hold the number of
 // trees that can be seen from that position.
 #[derive(Debug, Eq, PartialEq)]
-struct Tree(u16, u16, u16, u16, u16);
+struct Tree(usize, usize, usize, usize, usize);
 
 impl fmt::Display for Tree {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
@@ -30,19 +30,19 @@ impl fmt::Display for Tree {
 
 impl Tree {
     // ----------------- Part 1 -------------------
-    fn max_left(&self) -> u16 {
+    fn max_left(&self) -> usize {
         self.0.max(self.1)
     }
 
-    fn max_up(&self) -> u16 {
+    fn max_up(&self) -> usize {
         self.0.max(self.2)
     }
 
-    fn max_right(&self) -> u16 {
+    fn max_right(&self) -> usize {
         self.0.max(self.3)
     }
 
-    fn max_down(&self) -> u16 {
+    fn max_down(&self) -> usize {
         self.0.max(self.4)
     }
 
@@ -53,7 +53,7 @@ impl Tree {
     }
 
     // ----------------- Part 2 -------------------
-    fn scenic_score(&self) -> u16 {
+    fn scenic_score(&self) -> usize {
         self.1 * self.2 * self.3 * self.4
     }
 }
@@ -70,7 +70,7 @@ impl Solution {
             .fold(Vec::with_capacity(input.len()), |mut acc, &line| {
                 acc.push(
                     line.chars()
-                        .map(|c| Tree(c.to_digit(10).unwrap() as u16, 0, 0, 0, 0))
+                        .map(|c| Tree(c.to_digit(10).unwrap() as usize, 0, 0, 0, 0))
                         .collect(),
                 );
                 acc
@@ -106,8 +106,54 @@ impl Solution {
         forest
     }
 
+    fn update_tree_view(
+        forest: &Forest,
+        row: usize,
+        col: usize,
+        max_rows: usize,
+        max_cols: usize,
+    ) -> Tree {
+        let tree = &forest[row][col];
+
+        // Update left view
+        let left: usize = match (0..col).rev().find(|&i| forest[row][i].0 >= tree.0) {
+            None => col,
+            Some(c) => col - c,
+        };
+
+        // Update top view
+        let top: usize = match (0..row).rev().find(|&j| forest[j][col].0 >= tree.0) {
+            None => row,
+            Some(r) => row - r,
+        };
+
+        // Update right view
+        let right: usize = match (col + 1..max_cols).find(|&i| forest[row][i].0 >= tree.0) {
+            None => max_cols - col - 1,
+            Some(c) => c - col,
+        };
+
+        // Update bottom view
+        let bottom: usize = match (row + 1..max_rows).find(|&j| forest[col][j].0 >= tree.0) {
+            None => max_rows - row - 1,
+            Some(r) => r - row,
+        };
+
+        Tree(tree.0, left, top, right, bottom)
+    }
+
     fn build_forest_part2(input: &Vec<&str>) -> Forest {
-        todo!()
+        let mut forest: Forest = Solution::build_forest(input);
+
+        let (rows, cols) = (forest.len(), forest[0].len());
+        for row in 0..rows {
+            for col in 0..cols {
+                let new_tree = Solution::update_tree_view(&forest, row, col, rows, cols);
+                forest[row][col] = new_tree;
+            }
+        }
+
+        forest
     }
 }
 
