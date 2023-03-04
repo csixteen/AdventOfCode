@@ -35,11 +35,11 @@ impl Solution {
 }
 
 impl Solver for Solution {
-    fn part1(&self, input: &Vec<&str>) -> String {
+    fn part1(&self, input: &[&str]) -> String {
         Solution::find_marker(input[0]).to_string()
     }
 
-    fn part2(&self, input: &Vec<&str>) -> String {
+    fn part2(&self, input: &[&str]) -> String {
         Solution::find_message(input[0]).to_string()
     }
 }

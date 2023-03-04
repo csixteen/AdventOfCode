@@ -5,7 +5,7 @@ use aoc::Solver;
 use lazy_static::lazy_static;
 use regex::Regex;
 
-fn build_graph(rules: &Vec<&str>) -> HashMap<String, HashSet<String>> {
+fn build_graph(rules: &[&str]) -> HashMap<String, HashSet<String>> {
     lazy_static! {
         static ref CONTAINS: Regex = Regex::new(r"(.*) bags? contain (.*)").unwrap();
         static ref CONTAINED: Regex = Regex::new(r"(\d+) (.*) bags?").unwrap();
@@ -20,7 +20,8 @@ fn build_graph(rules: &Vec<&str>) -> HashMap<String, HashSet<String>> {
 
             for c in _contained.iter() {
                 if let Some(g2) = CONTAINED.captures(c) {
-                    graph.entry(String::from(g2.get(2).unwrap().as_str()))
+                    graph
+                        .entry(String::from(g2.get(2).unwrap().as_str()))
                         .or_insert(HashSet::new())
                         .insert(String::from(_contains));
                 }
@@ -39,11 +40,11 @@ fn contain_color(graph: &HashMap<String, HashSet<String>>, color: &str, acc: &mu
                 acc.insert(String::from(c));
                 contain_color(graph, c, acc);
             });
-        },
+        }
     };
 }
 
-fn total_containing_bags(rules: &Vec<&str>, color: &str) -> usize {
+fn total_containing_bags(rules: &[&str], color: &str) -> usize {
     let graph = build_graph(&rules);
     let mut acc = HashSet::new();
     contain_color(&graph, color, &mut acc);
@@ -51,7 +52,7 @@ fn total_containing_bags(rules: &Vec<&str>, color: &str) -> usize {
     acc.len()
 }
 
-fn build_inverted_graph(rules: &Vec<&str>) -> HashMap<String, HashSet<(usize, String)>> {
+fn build_inverted_graph(rules: &[&str]) -> HashMap<String, HashSet<(usize, String)>> {
     lazy_static! {
         static ref CONTAINS: Regex = Regex::new(r"(.*) bags? contain (.*)").unwrap();
         static ref CONTAINED: Regex = Regex::new(r"(\d+) (.*) bags?").unwrap();
@@ -66,11 +67,12 @@ fn build_inverted_graph(rules: &Vec<&str>) -> HashMap<String, HashSet<(usize, St
 
             for c in _contained.iter() {
                 if let Some(g2) = CONTAINED.captures(c) {
-                    graph.entry(String::from(_contains))
+                    graph
+                        .entry(String::from(_contains))
                         .or_insert(HashSet::new())
                         .insert((
                             usize::from_str(g2.get(1).unwrap().as_str()).unwrap(),
-                            String::from(g2.get(2).unwrap().as_str())
+                            String::from(g2.get(2).unwrap().as_str()),
                         ));
                 }
             }
@@ -80,16 +82,16 @@ fn build_inverted_graph(rules: &Vec<&str>) -> HashMap<String, HashSet<(usize, St
     graph
 }
 
-fn contained_colors(graph: &HashMap<String, HashSet<(usize,String)>>, color: &str) -> usize {
+fn contained_colors(graph: &HashMap<String, HashSet<(usize, String)>>, color: &str) -> usize {
     match graph.get(color) {
         None => 0,
-        Some(contained) => contained.iter().fold(0, |acc, (c, i)| {
-            acc + c + c * contained_colors(graph, i)
-        })
+        Some(contained) => contained
+            .iter()
+            .fold(0, |acc, (c, i)| acc + c + c * contained_colors(graph, i)),
     }
 }
 
-fn total_contained_bags(rules: &Vec<&str>, color: &str) -> usize {
+fn total_contained_bags(rules: &[&str], color: &str) -> usize {
     let graph = build_inverted_graph(&rules);
     contained_colors(&graph, color)
 }
@@ -97,11 +99,11 @@ fn total_contained_bags(rules: &Vec<&str>, color: &str) -> usize {
 pub struct Solution;
 
 impl Solver for Solution {
-    fn part1(&self, input: &Vec<&str>) -> String {
+    fn part1(&self, input: &[&str]) -> String {
         total_containing_bags(input, "shiny gold").to_string()
     }
 
-    fn part2(&self, input: &Vec<&str>) -> String {
+    fn part2(&self, input: &[&str]) -> String {
         total_contained_bags(input, "shiny gold").to_string()
     }
 }
@@ -143,21 +145,12 @@ mod tests {
 
     #[test]
     fn test_total_containing_bags() {
-        assert_eq!(
-            4,
-            total_containing_bags(&RULES.to_vec(), "shiny gold"),
-        );
+        assert_eq!(4, total_containing_bags(&RULES.to_vec(), "shiny gold"),);
     }
 
     #[test]
     fn test_total_contained_bags() {
-        assert_eq!(
-            32,
-            total_contained_bags(&RULES.to_vec(), "shiny gold"),
-        );
-        assert_eq!(
-            126,
-            total_contained_bags(&RULES2.to_vec(), "shiny gold"),
-        );
+        assert_eq!(32, total_contained_bags(&RULES.to_vec(), "shiny gold"),);
+        assert_eq!(126, total_contained_bags(&RULES2.to_vec(), "shiny gold"),);
     }
 }

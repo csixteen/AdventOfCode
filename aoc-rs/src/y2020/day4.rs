@@ -20,24 +20,22 @@ impl Solution {
             "byr" => {
                 let v = i32::from_str(value).unwrap_or(0);
                 v >= 1920 && v <= 2002
-            },
+            }
             "iyr" => {
                 let v = i32::from_str(value).unwrap_or(0);
                 v >= 2010 && v <= 2020
-            },
+            }
             "eyr" => {
                 let v = i32::from_str(value).unwrap_or(0);
                 v >= 2020 && v <= 2030
-            },
-            "hgt" => {
-                match HGT.captures(value) {
-                    None => false,
-                    Some(c) => {
-                        let height = i32::from_str(c.get(1).unwrap().as_str()).unwrap();
-                        let metric = c.get(2).unwrap().as_str();
-                        (metric == "cm" && (height >= 150 && height <= 193)) ||
-                            (metric == "in" && (height >= 59 && height <= 76))
-                    }
+            }
+            "hgt" => match HGT.captures(value) {
+                None => false,
+                Some(c) => {
+                    let height = i32::from_str(c.get(1).unwrap().as_str()).unwrap();
+                    let metric = c.get(2).unwrap().as_str();
+                    (metric == "cm" && (height >= 150 && height <= 193))
+                        || (metric == "in" && (height >= 59 && height <= 76))
                 }
             },
             "hcl" => HCL.is_match(value),
@@ -66,11 +64,15 @@ impl Solution {
         line.split(" ").fold(0, |acc, part| {
             let mut it = part.split(":");
             let (field, value) = (it.next().unwrap(), it.next().unwrap());
-            acc | (if Self::is_valid_field(field, value) { Self::field_to_bit(field) } else { 0 })
+            acc | (if Self::is_valid_field(field, value) {
+                Self::field_to_bit(field)
+            } else {
+                0
+            })
         })
     }
 
-    fn count_valid_passports(content: &Vec<&str>) -> usize {
+    fn count_valid_passports(content: &[&str]) -> usize {
         let mut total = 0;
         let mut fields: u8 = 0;
 
@@ -91,11 +93,11 @@ impl Solution {
 }
 
 impl Solver for Solution {
-    fn part1(&self, _input: &Vec<&str>) -> String {
+    fn part1(&self, _input: &[&str]) -> String {
         "".to_string()
     }
 
-    fn part2(&self, input: &Vec<&str>) -> String {
+    fn part2(&self, input: &[&str]) -> String {
         Self::count_valid_passports(input).to_string()
     }
 }
@@ -108,11 +110,7 @@ mod tests {
     fn test_no_valid_passports() {
         assert_eq!(
             0,
-            Solution::count_valid_passports(&vec![
-                    "eyr:2027",
-                    "",
-                    "byr:1981"
-                ],),
+            Solution::count_valid_passports(&vec!["eyr:2027", "", "byr:1981"],),
         );
     }
 
@@ -120,23 +118,21 @@ mod tests {
     fn test_two_valid_passport() {
         assert_eq!(
             2,
-            Solution::count_valid_passports(
-                &vec![
-                    "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd",
-                    "byr:1937 iyr:2017 cid:147 hgt:183cm",
-                    "",
-                    "iyr:2013 ecl:amb cid:350 eyr:2023 pid:028048884",
-                    "hcl:#cfa07d byr:1929",
-                    "",
-                    "hcl:#ae17e1 iyr:2013",
-                    "eyr:2024",
-                    "ecl:brn pid:760753108 byr:1931",
-                    "hgt:179cm",
-                    "",
-                    "hcl:#cfa07d eyr:2025 pid:166559648",
-                    "iyr:2011 ecl:brn hgt:59in"
-                ]
-            ),
+            Solution::count_valid_passports(&vec![
+                "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd",
+                "byr:1937 iyr:2017 cid:147 hgt:183cm",
+                "",
+                "iyr:2013 ecl:amb cid:350 eyr:2023 pid:028048884",
+                "hcl:#cfa07d byr:1929",
+                "",
+                "hcl:#ae17e1 iyr:2013",
+                "eyr:2024",
+                "ecl:brn pid:760753108 byr:1931",
+                "hgt:179cm",
+                "",
+                "hcl:#cfa07d eyr:2025 pid:166559648",
+                "iyr:2011 ecl:brn hgt:59in"
+            ]),
         );
     }
 

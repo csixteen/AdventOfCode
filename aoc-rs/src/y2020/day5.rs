@@ -32,14 +32,14 @@ impl Solution {
         Self::seat_row(seat) * 8 + Self::seat_col(seat)
     }
 
-    fn get_max_id(seats: &Vec<&str>) -> usize {
+    fn get_max_id(seats: &[&str]) -> usize {
         seats.iter().fold(0, |acc, seat| {
             let id = Self::seat_id(seat);
             acc.max(id)
         })
     }
 
-    fn find_missing_seat(seats: &Vec<&str>) -> usize {
+    fn find_missing_seat(seats: &[&str]) -> usize {
         let min_id = seats.iter().map(|seat| Self::seat_id(seat)).min().unwrap();
         let max_id = Self::get_max_id(seats);
 
@@ -53,11 +53,11 @@ impl Solution {
 }
 
 impl Solver for Solution {
-    fn part1(&self, input: &Vec<&str>) -> String {
+    fn part1(&self, input: &[&str]) -> String {
         Self::get_max_id(input).to_string()
     }
 
-    fn part2(&self, input: &Vec<&str>) -> String {
+    fn part2(&self, input: &[&str]) -> String {
         Self::find_missing_seat(input).to_string()
     }
 }

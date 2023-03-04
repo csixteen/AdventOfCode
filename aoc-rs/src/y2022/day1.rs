@@ -5,7 +5,7 @@ use std::str::FromStr;
 pub struct Solution;
 
 impl Solver for Solution {
-    fn part1(&self, input: &Vec<&str>) -> String {
+    fn part1(&self, input: &[&str]) -> String {
         input
             .split(|s| s.is_empty())
             .filter(|&p| !p.is_empty())
@@ -15,7 +15,7 @@ impl Solver for Solution {
             .to_string()
     }
 
-    fn part2(&self, input: &Vec<&str>) -> String {
+    fn part2(&self, input: &[&str]) -> String {
         input
             .split(|s| s.is_empty())
             .filter(|&p| !p.is_empty())

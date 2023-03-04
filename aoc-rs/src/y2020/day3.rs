@@ -5,7 +5,7 @@ use aoc::Solver;
 pub struct Solution;
 
 impl Solution {
-    fn count_trees(lines: &Vec<&str>, dx: usize, dy: usize) -> usize {
+    fn count_trees(lines: &[&str], dx: usize, dy: usize) -> usize {
         let width = lines[0].len();
         let mut x = 0;
         let mut num_trees = 0_usize;
@@ -21,21 +21,19 @@ impl Solution {
         num_trees
     }
 
-    fn count_trees_all_slopes(lines: &Vec<&str>) -> usize {
+    fn count_trees_all_slopes(lines: &[&str]) -> usize {
         [(1, 1), (3, 1), (5, 1), (7, 1), (1, 2)]
             .iter()
-            .fold(1, |acc, (x, y)| {
-                acc * Self::count_trees(lines, *x, *y)
-            })
+            .fold(1, |acc, (x, y)| acc * Self::count_trees(lines, *x, *y))
     }
 }
 
 impl Solver for Solution {
-    fn part1(&self, input: &Vec<&str>) -> String {
+    fn part1(&self, input: &[&str]) -> String {
         Self::count_trees(input, 3, 1).to_string()
     }
 
-    fn part2(&self, input: &Vec<&str>) -> String {
+    fn part2(&self, input: &[&str]) -> String {
         Self::count_trees_all_slopes(input).to_string()
     }
 }
@@ -60,17 +58,11 @@ mod tests {
 
     #[test]
     fn test_count_trees() {
-        assert_eq!(
-            7,
-            Solution::count_trees(&MAP.to_vec(), 3, 1),
-        );
+        assert_eq!(7, Solution::count_trees(&MAP.to_vec(), 3, 1),);
     }
 
     #[test]
     fn test_count_trees_all_slopes() {
-        assert_eq!(
-            336,
-            Solution::count_trees_all_slopes(&MAP.to_vec()),
-        );
+        assert_eq!(336, Solution::count_trees_all_slopes(&MAP.to_vec()),);
     }
 }

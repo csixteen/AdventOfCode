@@ -9,7 +9,7 @@ impl Solution {
         input.chars().fold(0, |acc, c| match c {
             '(' => acc + 1,
             ')' => acc - 1,
-            _   => unreachable!(),
+            _ => unreachable!(),
         })
     }
 
@@ -28,11 +28,11 @@ impl Solution {
 }
 
 impl Solver for Solution {
-    fn part1(&self, input: &Vec<&str>) -> String {
+    fn part1(&self, input: &[&str]) -> String {
         Solution::calculate_floor(&input[0]).to_string()
     }
 
-    fn part2(&self, input: &Vec<&str>) -> String {
+    fn part2(&self, input: &[&str]) -> String {
         Solution::first_time_position(&input[0]).to_string()
     }
 }

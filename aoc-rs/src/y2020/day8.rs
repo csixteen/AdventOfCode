@@ -5,7 +5,6 @@ use std::str::FromStr;
 
 use aoc::Solver;
 
-
 #[derive(Clone, Debug, PartialEq)]
 enum Instruction {
     NOP,
@@ -43,11 +42,11 @@ impl Program {
                     (ACC, n) => {
                         self.acc += n;
                         self.pc += 1;
-                    },
+                    }
                 };
 
                 Ok(())
-            },
+            }
         }
     }
 
@@ -64,13 +63,12 @@ fn fix_and_execute(code: &Vec<(Instruction, i32)>) -> i32 {
     use Instruction::*;
 
     for i in 0..code.len() {
-        if code[i].0 == ACC { continue; }
+        if code[i].0 == ACC {
+            continue;
+        }
 
         let mut new_code = code.clone();
-        new_code[i] = (
-            if code[i].0 == NOP { JMP } else { NOP },
-            code[i].1,
-        );
+        new_code[i] = (if code[i].0 == NOP { JMP } else { NOP }, code[i].1);
 
         let mut p = Program::new(&new_code);
         if let Ok(n) = p.execute() {
@@ -81,7 +79,7 @@ fn fix_and_execute(code: &Vec<(Instruction, i32)>) -> i32 {
     unreachable!();
 }
 
-fn parse_code(lines: &Vec<&str>) -> Vec<(Instruction, i32)> {
+fn parse_code(lines: &[&str]) -> Vec<(Instruction, i32)> {
     lines
         .iter()
         .map(|line| {
@@ -101,7 +99,7 @@ fn parse_code(lines: &Vec<&str>) -> Vec<(Instruction, i32)> {
 pub struct Solution;
 
 impl Solver for Solution {
-    fn part1(&self, input: &Vec<&str>) -> String {
+    fn part1(&self, input: &[&str]) -> String {
         let code = parse_code(input);
         let mut p = Program::new(&code);
         match p.execute() {
@@ -110,7 +108,7 @@ impl Solver for Solution {
         }
     }
 
-    fn part2(&self, input: &Vec<&str>) -> String {
+    fn part2(&self, input: &[&str]) -> String {
         let code = parse_code(input);
         fix_and_execute(&code).to_string()
     }

@@ -35,8 +35,8 @@ macro_rules! set {
 }
 
 pub trait Solver {
-    fn part1(&self, input: &Vec<&str>) -> String;
-    fn part2(&self, input: &Vec<&str>) -> String;
+    fn part1(&self, input: &[&str]) -> String;
+    fn part2(&self, input: &[&str]) -> String;
 }
 
 #[cfg(test)]

@@ -24,7 +24,7 @@ impl Section {
 pub struct Solution;
 
 impl Solution {
-    fn solve(input: &Vec<&str>, f: fn(&Section, &Section) -> bool) -> String {
+    fn solve(input: &[&str], f: fn(&Section, &Section) -> bool) -> String {
         input
             .iter()
             .map(|&line| {
@@ -48,11 +48,11 @@ impl Solution {
 }
 
 impl Solver for Solution {
-    fn part1(&self, input: &Vec<&str>) -> String {
+    fn part1(&self, input: &[&str]) -> String {
         Solution::solve(input, Solution::contained)
     }
 
-    fn part2(&self, input: &Vec<&str>) -> String {
+    fn part2(&self, input: &[&str]) -> String {
         Solution::solve(input, Solution::overlap)
     }
 }

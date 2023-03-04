@@ -106,7 +106,7 @@ impl Solution {
 }
 
 impl Solver for Solution {
-    fn part1(&self, input: &Vec<&str>) -> String {
+    fn part1(&self, input: &[&str]) -> String {
         let root = Solution::build_tree(input);
         root.dir_sizes()
             .iter()
@@ -115,7 +115,7 @@ impl Solver for Solution {
             .to_string()
     }
 
-    fn part2(&self, input: &Vec<&str>) -> String {
+    fn part2(&self, input: &[&str]) -> String {
         let root = Solution::build_tree(input);
         let target_size = 30000000 - (70000000 - root.total_size());
         let mut min = usize::MAX;

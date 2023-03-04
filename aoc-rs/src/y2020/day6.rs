@@ -6,21 +6,22 @@ pub struct Solution;
 
 impl Solution {
     fn individual_answers(answers: &str) -> u32 {
-        answers.bytes().fold(0, |acc, c| {
-            acc | 0x1 << (c - b'a')
-        })
+        answers.bytes().fold(0, |acc, c| acc | 0x1 << (c - b'a'))
     }
 
     fn count_group_answers(group: &Vec<&str>) -> usize {
-        group.iter().fold(0_u32, |acc, answers| {
-            acc | Self::individual_answers(answers)
-        }).count_ones() as usize
+        group
+            .iter()
+            .fold(0_u32, |acc, answers| {
+                acc | Self::individual_answers(answers)
+            })
+            .count_ones() as usize
     }
 
     fn count_total_answers(groups: &Vec<Vec<&str>>) -> usize {
-        groups.iter().fold(0, |acc, group| {
-            acc + Self::count_group_answers(group)
-        })
+        groups
+            .iter()
+            .fold(0, |acc, group| acc + Self::count_group_answers(group))
     }
 
     fn count_group_all_yes(group: &Vec<&str>) -> usize {
@@ -38,9 +39,9 @@ impl Solution {
     }
 
     fn count_total_all_yes(groups: &Vec<Vec<&str>>) -> usize {
-        groups.iter().fold(0, |acc, group| {
-            acc + Self::count_group_all_yes(group)
-        })
+        groups
+            .iter()
+            .fold(0, |acc, group| acc + Self::count_group_all_yes(group))
     }
 
     fn build_groups(mut input: Vec<&str>) -> Vec<Vec<&str>> {
@@ -53,13 +54,13 @@ impl Solution {
 }
 
 impl Solver for Solution {
-    fn part1(&self, input: &Vec<&str>) -> String {
-        let groups = Self::build_groups(input.clone());
+    fn part1(&self, input: &[&str]) -> String {
+        let groups = Self::build_groups(input.to_vec());
         Self::count_total_answers(&groups).to_string()
     }
 
-    fn part2(&self, input: &Vec<&str>) -> String {
-        let groups = Self::build_groups(input.clone());
+    fn part2(&self, input: &[&str]) -> String {
+        let groups = Self::build_groups(input.to_vec());
         Self::count_total_all_yes(&groups).to_string()
     }
 }
@@ -89,12 +90,12 @@ mod tests {
         assert_eq!(
             11,
             Solution::count_total_answers(&vec![
-                    vec!["abc"],
-                    vec!["a", "b", "c"],
-                    vec!["ab", "ac"],
-                    vec!["a", "a", "a", "a"],
-                    vec!["b"],
-                ],),
+                vec!["abc"],
+                vec!["a", "b", "c"],
+                vec!["ab", "ac"],
+                vec!["a", "a", "a", "a"],
+                vec!["b"],
+            ],),
         );
     }
 
@@ -112,12 +113,12 @@ mod tests {
         assert_eq!(
             6,
             Solution::count_total_all_yes(&vec![
-                    vec!["abc"],
-                    vec!["a", "b", "c"],
-                    vec!["ab", "ac"],
-                    vec!["a", "a", "a", "a"],
-                    vec!["b"],
-                ],),
+                vec!["abc"],
+                vec!["a", "b", "c"],
+                vec!["ab", "ac"],
+                vec!["a", "a", "a", "a"],
+                vec!["b"],
+            ],),
         );
     }
 }

@@ -64,7 +64,7 @@ type Forest = Vec<Vec<Tree>>;
 pub struct Solution;
 
 impl Solution {
-    fn build_forest(input: &Vec<&str>) -> Forest {
+    fn build_forest(input: &[&str]) -> Forest {
         input
             .iter()
             .fold(Vec::with_capacity(input.len()), |mut acc, &line| {
@@ -77,7 +77,7 @@ impl Solution {
             })
     }
 
-    fn build_forest_part1(input: &Vec<&str>) -> Forest {
+    fn build_forest_part1(input: &[&str]) -> Forest {
         let mut forest: Forest = Solution::build_forest(input);
 
         let (rows, cols) = (forest.len(), forest[0].len());
@@ -142,7 +142,7 @@ impl Solution {
         Tree(tree.0, left, top, right, bottom)
     }
 
-    fn build_forest_part2(input: &Vec<&str>) -> Forest {
+    fn build_forest_part2(input: &[&str]) -> Forest {
         let mut forest: Forest = Solution::build_forest(input);
 
         let (rows, cols) = (forest.len(), forest[0].len());
@@ -158,7 +158,7 @@ impl Solution {
 }
 
 impl Solver for Solution {
-    fn part1(&self, input: &Vec<&str>) -> String {
+    fn part1(&self, input: &[&str]) -> String {
         let forest = Solution::build_forest_part1(input);
         let (rows, cols) = (forest.len(), forest[0].len());
         let base = cols * 2 + (rows - 2) * 2;
@@ -178,7 +178,7 @@ impl Solver for Solution {
         .to_string()
     }
 
-    fn part2(&self, input: &Vec<&str>) -> String {
+    fn part2(&self, input: &[&str]) -> String {
         let forest = Solution::build_forest_part2(input);
         forest
             .iter()

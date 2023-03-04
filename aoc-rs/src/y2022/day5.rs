@@ -51,7 +51,7 @@ impl Solution {
     }
 
     fn solve(
-        input: &Vec<&str>,
+        input: &[&str],
         state: Vec<Vec<char>>,
         f: fn(usize, usize, usize, &mut Vec<Vec<char>>),
     ) -> String {
@@ -74,11 +74,11 @@ impl Solution {
 }
 
 impl Solver for Solution {
-    fn part1(&self, input: &Vec<&str>) -> String {
+    fn part1(&self, input: &[&str]) -> String {
         Solution::solve(input, Solution::initial_state(), Solution::move_from_to)
     }
 
-    fn part2(&self, input: &Vec<&str>) -> String {
+    fn part2(&self, input: &[&str]) -> String {
         Solution::solve(
             input,
             Solution::initial_state(),

@@ -68,7 +68,7 @@ fn crack_xmas2(numbers: &Vec<i64>, preamble: usize) -> i64 {
 pub struct Solution;
 
 impl Solver for Solution {
-    fn part1(&self, input: &Vec<&str>) -> String {
+    fn part1(&self, input: &[&str]) -> String {
         let numbers: Vec<i64> = input
             .iter()
             .map(|line| i64::from_str(line).unwrap())
@@ -76,7 +76,7 @@ impl Solver for Solution {
         crack_xmas(&numbers, 25).to_string()
     }
 
-    fn part2(&self, input: &Vec<&str>) -> String {
+    fn part2(&self, input: &[&str]) -> String {
         let numbers: Vec<i64> = input
             .iter()
             .map(|line| i64::from_str(line).unwrap())

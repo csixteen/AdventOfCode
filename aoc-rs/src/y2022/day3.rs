@@ -34,7 +34,7 @@ impl Solution {
 }
 
 impl Solver for Solution {
-    fn part1(&self, input: &Vec<&str>) -> String {
+    fn part1(&self, input: &[&str]) -> String {
         input
             .iter()
             .map(|&rucksack| Solution::split_rucksack(rucksack))
@@ -47,7 +47,7 @@ impl Solver for Solution {
             .to_string()
     }
 
-    fn part2(&self, input: &Vec<&str>) -> String {
+    fn part2(&self, input: &[&str]) -> String {
         input
             .chunks(3)
             .map(|chunk| Solution::priority(Solution::group_badge(chunk)))
