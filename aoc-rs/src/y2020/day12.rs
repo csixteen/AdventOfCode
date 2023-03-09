@@ -1,33 +1,6 @@
-// MIT License
-//
-// Copyright (c) 2020 Pedro Rodrigues
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-
-// https://adventofcode.com/2020/day/12
-
-#![allow(non_snake_case)]
-
 use std::str::FromStr;
 
-use aoc::fs::get_file_contents;
-
+use aoc::Solver;
 
 trait Ferry {
     fn manhattan_distance(&mut self) -> i32;
@@ -67,9 +40,9 @@ impl Ferry for NormalFerry {
             'F' => {
                 self.x += (n as i32) * self.dx;
                 self.y += (n as i32) * self.dy;
-            },
+            }
             'R' => self.rotate(n),
-            'L' => self.rotate(360-n),
+            'L' => self.rotate(360 - n),
             _ => panic!("Unknown instruction"),
         }
     }
@@ -115,15 +88,15 @@ impl Ferry for WaypointFerry {
             'F' => {
                 self.x += (n as i32) * self.wp_x;
                 self.y += (n as i32) * self.wp_y;
-            },
+            }
             'R' => self.rotate(n),
-            'L' => self.rotate(360-n),
+            'L' => self.rotate(360 - n),
             _ => panic!("Unknown instruction"),
         }
     }
 
     fn rotate(&mut self, n: usize) {
-        for _ in 0..(n % 360)/90 {
+        for _ in 0..(n % 360) / 90 {
             let tmp = self.wp_x;
             self.wp_x = self.wp_y;
             self.wp_y = -tmp;
@@ -131,7 +104,7 @@ impl Ferry for WaypointFerry {
     }
 }
 
-fn manhattan_distance(mut ferry: impl Ferry, instructions: &Vec<(char, usize)>) -> i32 {
+fn manhattan_distance(mut ferry: impl Ferry, instructions: &[(char, usize)]) -> i32 {
     for (c, i) in instructions.iter() {
         ferry.process_instruction(*c, *i);
     }
@@ -139,20 +112,36 @@ fn manhattan_distance(mut ferry: impl Ferry, instructions: &Vec<(char, usize)>) 
     ferry.manhattan_distance()
 }
 
-fn main() -> std::io::Result<()> {
-    let lines = get_file_contents("data/input.txt")?;
-    let instructions: Vec<(char, usize)> = lines
-        .iter()
-        .map(|line| (line.chars().nth(0).unwrap(), usize::from_str(&line[1..]).unwrap()))
-        .collect();
+pub struct Solution;
 
-    let normal_ferry = NormalFerry::new();
-    println!("Day 12 / Part 1: {}", manhattan_distance(normal_ferry, &instructions));
+impl Solver for Solution {
+    fn part1(&self, input: &[&str]) -> String {
+        let instructions: Vec<(char, usize)> = input
+            .iter()
+            .map(|line| {
+                (
+                    line.chars().nth(0).unwrap(),
+                    usize::from_str(&line[1..]).unwrap(),
+                )
+            })
+            .collect();
+        let ferry = NormalFerry::new();
+        manhattan_distance(ferry, &instructions).to_string()
+    }
 
-    let waypoint_ferry = WaypointFerry::new();
-    println!("Day 12 / Part 2: {}", manhattan_distance(waypoint_ferry, &instructions));
-
-    Ok(())
+    fn part2(&self, input: &[&str]) -> String {
+        let instructions: Vec<(char, usize)> = input
+            .iter()
+            .map(|line| {
+                (
+                    line.chars().nth(0).unwrap(),
+                    usize::from_str(&line[1..]).unwrap(),
+                )
+            })
+            .collect();
+        let ferry = WaypointFerry::new();
+        manhattan_distance(ferry, &instructions).to_string()
+    }
 }
 
 #[cfg(test)]
@@ -183,13 +172,7 @@ mod tests {
             25,
             manhattan_distance(
                 ferry,
-                &vec![
-                    ('F', 10),
-                    ('N', 3),
-                    ('F', 7),
-                    ('R', 90),
-                    ('F', 11),
-                ],
+                &vec![('F', 10), ('N', 3), ('F', 7), ('R', 90), ('F', 11),],
             ),
         );
     }
@@ -202,13 +185,7 @@ mod tests {
             286,
             manhattan_distance(
                 ferry,
-                &vec![
-                    ('F', 10),
-                    ('N', 3),
-                    ('F', 7),
-                    ('R', 90),
-                    ('F', 11),
-                ],
+                &vec![('F', 10), ('N', 3), ('F', 7), ('R', 90), ('F', 11),],
             ),
         );
     }
