@@ -1,35 +1,8 @@
-// MIT License
-//
-// Copyright (c) 2020 Pedro Rodrigues
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-
-// https://adventofcode.com/2020/day/13
-
-#![allow(non_snake_case)]
-
 use std::str::FromStr;
 
-use aoc::fs::get_file_contents;
+use aoc::Solver;
 
-
-fn shuttle_search(lines: &Vec<String>) -> usize {
+fn shuttle_search(lines: &[&str]) -> usize {
     let timestamp = usize::from_str(&lines[0]).unwrap();
     let mut wait_time = usize::MAX;
     let mut bus_id = 0;
@@ -57,8 +30,9 @@ fn extended_gcd(a: i128, b: i128) -> (i128, i128, i128) {
      * such that a*x + b*y = gcd(a,b). This method can be used to find
      * the solutions to linear Diophantine equations.
      */
-    if a == 0 { (b, 0, 1) }
-    else {
+    if a == 0 {
+        (b, 0, 1)
+    } else {
         let (g, m, n) = extended_gcd(b % a, a);
         (g, n - (b / a) * m, m)
     }
@@ -68,7 +42,7 @@ fn extended_gcd(a: i128, b: i128) -> (i128, i128, i128) {
 // Many thanks!!
 fn calculate(a: (i128, i128), b: (i128, i128)) -> (i128, i128) {
     let (_, m, n) = extended_gcd(a.0, b.0);
-    let k = a.1*n*b.0 + b.1*m*a.0;
+    let k = a.1 * n * b.0 + b.1 * m * a.0;
 
     // Because I'm using i128, I need to use rem_euclid, or else the
     // regular % will return negative results at some point.
@@ -87,26 +61,29 @@ fn minimum_timestamp(ids: Vec<(i128, i128)>) -> i128 {
     a_i % a_j
 }
 
-fn first_timestamp(ids: &String) -> i128 {
+fn first_timestamp(ids: &str) -> i128 {
     minimum_timestamp(
-        ids
-            .split(',')
+        ids.split(',')
             .enumerate()
             .fold(Vec::new(), |mut acc, (i, id)| {
                 if let Ok(n) = i128::from_str(id) {
                     acc.push((n, i as i128));
                 }
                 acc
-            }))
+            }),
+    )
 }
 
-fn main() -> std::io::Result<()> {
-    let lines = get_file_contents("data/input.txt")?;
+pub struct Solution;
 
-    println!("Day 13 / Part 1: {}", shuttle_search(&lines));
-    println!("Day 13 / Part 2: {}", first_timestamp(&lines[1]));
+impl Solver for Solution {
+    fn part1(&self, input: &[&str]) -> String {
+        shuttle_search(input).to_string()
+    }
 
-    Ok(())
+    fn part2(&self, input: &[&str]) -> String {
+        first_timestamp(input[1]).to_string()
+    }
 }
 
 #[cfg(test)]
@@ -115,15 +92,7 @@ mod tests {
 
     #[test]
     fn test_shuttle_search() {
-        assert_eq!(
-            295,
-            shuttle_search(
-                &vec![
-                    "939".to_string(),
-                    "7,13,x,x,59,x,31,19".to_string(),
-                ],
-            ),
-        );
+        assert_eq!(295, shuttle_search(&["939", "7,13,x,x,59,x,31,19"],),);
     }
 
     #[test]
