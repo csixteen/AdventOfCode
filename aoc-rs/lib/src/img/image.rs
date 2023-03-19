@@ -1,38 +1,11 @@
-// MIT License
-//
-// Copyright (c) 2020 Pedro Rodrigues
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-
-// https://adventofcode.com/2020/day/20
-
 #![allow(non_snake_case)]
-
 use std::collections::HashMap;
-use std::fmt;
 
-use crate::img::tile::{Tile,TileEdge};
-
+use crate::img::tile::{Tile, TileEdge};
 
 type EdgeMap<'a> = HashMap<String, Vec<&'a Tile>>;
 
-#[derive(Default,Debug)]
+#[derive(Default, Debug)]
 pub struct Image {
     tiles: Vec<Vec<Tile>>,
     N: usize,
@@ -63,7 +36,9 @@ impl Image {
     }
 
     fn choose_tile(&self, pt: &Tile, pe: String, e: TileEdge, edge_map: &EdgeMap) -> Tile {
-        let candidate = edge_map.get(&pe).unwrap()
+        let candidate = edge_map
+            .get(&pe)
+            .unwrap()
             .iter()
             .filter(|&t| t.id != pt.id)
             .nth(0)
@@ -72,11 +47,11 @@ impl Image {
         for c in candidate.transformations().take(9) {
             let ee = c.edge(e);
             if pe == ee {
-                return c
+                return c;
             }
         }
 
-        unreachable!();  // Hopefully
+        unreachable!(); // Hopefully
     }
 
     /*
@@ -93,8 +68,8 @@ impl Image {
              */
             if row > 0 {
                 let c = self.choose_tile(
-                    &self.tiles[row-1][0],
-                    self.tiles[row-1][0].bottom_edge(),
+                    &self.tiles[row - 1][0],
+                    self.tiles[row - 1][0].bottom_edge(),
                     TileEdge::Top,
                     edge_map,
                 );
@@ -106,8 +81,8 @@ impl Image {
             // in the previous block.
             for col in 1..self.N {
                 let c = self.choose_tile(
-                    &self.tiles[row][col-1],
-                    self.tiles[row][col-1].right_edge(),
+                    &self.tiles[row][col - 1],
+                    self.tiles[row][col - 1].right_edge(),
                     TileEdge::Left,
                     edge_map,
                 );

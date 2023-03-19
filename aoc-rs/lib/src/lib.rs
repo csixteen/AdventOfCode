@@ -21,6 +21,7 @@
 // SOFTWARE.
 
 pub mod fs;
+pub mod img;
 pub mod math;
 
 #[macro_export]

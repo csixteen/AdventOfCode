@@ -1,33 +1,9 @@
-// MIT License
-//
-// Copyright (c) 2020 Pedro Rodrigues
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-
-// https://adventofcode.com/2020/day/23
-
-#![allow(non_snake_case)]
-
+use itertools::Itertools;
 use std::cmp::Ordering;
 use std::collections::VecDeque;
 use std::iter::FromIterator;
 
+use aoc::Solver;
 
 const INPUT: [i32; 9] = [2, 4, 7, 8, 1, 9, 3, 5, 6];
 
@@ -57,9 +33,13 @@ fn place_three(cups: &mut VecDeque<i32>, dest: i32, to_place: Vec<i32>) {
 }
 
 fn wrapping_sub(i: i32, min: &i32, max: &i32) -> i32 {
-    let ret = i-1;
+    let ret = i - 1;
 
-    if ret < *min { *max } else { ret }
+    if ret < *min {
+        *max
+    } else {
+        ret
+    }
 }
 
 fn play_game(cups: VecDeque<i32>, n: usize) -> VecDeque<i32> {
@@ -68,7 +48,7 @@ fn play_game(cups: VecDeque<i32>, n: usize) -> VecDeque<i32> {
     let min = cups.iter().min().unwrap().clone();
     let max = cups.iter().max().unwrap().clone();
 
-    for i in 0..n {
+    for _ in 0..n {
         let three = pick_three(&mut cups, curr);
 
         // Pick destination
@@ -107,21 +87,26 @@ fn crab_cups_part2() -> (i32, i32) {
         vec![2, 4, 7, 8, 1, 9, 3, 5, 6]
             .iter()
             .cloned()
-            .chain(10..=1000000)
+            .chain(10..=1000000),
     );
 
     xs = play_game(xs, 10000000);
     let i = xs.iter().position(|&c| c == 1).unwrap();
 
-    (xs[(i+1) % 1000000], xs[(i+2) % 1000000])
+    (xs[(i + 1) % 1000000], xs[(i + 2) % 1000000])
 }
 
-fn main() {
-    // Part 1
-    println!("Day 23 / Part 1: {:?}", crab_cups(&INPUT, 100));
+pub struct Solution;
 
-    // Part 2
-    println!("Day 23 / Part 2: {:?}", crab_cups_part2());
+impl Solver for Solution {
+    fn part1(&self, _input: &[&str]) -> String {
+        crab_cups(&INPUT, 100).iter().join("")
+    }
+
+    fn part2(&self, _input: &[&str]) -> String {
+        let (a, b) = crab_cups_part2();
+        format!("({}, {})", a, b)
+    }
 }
 
 #[cfg(test)]
