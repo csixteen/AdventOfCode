@@ -23,6 +23,7 @@
 pub mod fs;
 pub mod img;
 pub mod math;
+pub mod parsaoc;
 
 #[macro_export]
 macro_rules! set {
