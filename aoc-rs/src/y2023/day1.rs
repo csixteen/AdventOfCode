@@ -35,7 +35,7 @@ fn find_elem(s: impl Iterator<Item = char>, rev: bool) -> u32 {
         }
     }
 
-    return find_elem(ss.chars().skip(1), rev);
+    find_elem(ss.chars().skip(1), rev)
 }
 
 fn find_first(s: impl Iterator<Item = char>) -> u32 {
