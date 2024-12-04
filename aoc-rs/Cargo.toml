@@ -13,4 +13,4 @@ members = ["lib"]
 aoc = { path = "lib" }
 itertools = "0.10"
 lazy_static = "1.4"
-regex = "1.5"
+regex = "1"
